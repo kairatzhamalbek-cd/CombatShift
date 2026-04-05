@@ -1,33 +1,47 @@
-# CombatShift
+# 🎮 Combat Shift
 
-A [libGDX](https://libgdx.com/) project generated with [gdx-liftoff](https://github.com/libgdx/gdx-liftoff).
+Combat Shift is a 2D top-down action game built with Java and LibGDX, where the player fights waves of enemies, switches combat strategies, and collects power-ups to survive.
 
-This project was generated with a template including simple application launchers and an `ApplicationAdapter` extension that draws libGDX logo.
+## 🧩 Gameplay
 
-## Platforms
+The player controls a character in an arena and must survive against increasingly difficult waves of enemies.
 
-- `core`: Main module with the application logic shared by all platforms.
-- `lwjgl3`: Primary desktop platform using LWJGL3; was called 'desktop' in older docs.
+Key features:
+- Wave-based enemy system  
+- Dynamic combat strategies  
+- Temporary buffs (speed, fire damage, shield)  
+- Increasing difficulty  
 
-## Gradle
+The core mechanic is **adaptive combat**, where the player must change tactics depending on the situation.
 
-This project uses [Gradle](https://gradle.org/) to manage dependencies.
-The Gradle wrapper was included, so you can run Gradle tasks using `gradlew.bat` or `./gradlew` commands.
-Useful Gradle tasks and flags:
+## 🏗️ Architecture & Design Patterns
 
-- `--continue`: when using this flag, errors will not stop the tasks from running.
-- `--daemon`: thanks to this flag, Gradle daemon will be used to run chosen tasks.
-- `--offline`: when using this flag, cached dependency archives will be used.
-- `--refresh-dependencies`: this flag forces validation of all dependencies. Useful for snapshot versions.
-- `build`: builds sources and archives of every project.
-- `cleanEclipse`: removes Eclipse project data.
-- `cleanIdea`: removes IntelliJ project data.
-- `clean`: removes `build` folders, which store compiled classes and built archives.
-- `eclipse`: generates Eclipse project data.
-- `idea`: generates IntelliJ project data.
-- `lwjgl3:jar`: builds application's runnable jar, which can be found at `lwjgl3/build/libs`.
-- `lwjgl3:run`: starts the application.
-- `test`: runs unit tests (if any).
+This project demonstrates several software design patterns:
 
-Note that most tasks that are not specific to a single project can be run with `name:` prefix, where the `name` should be replaced with the ID of a specific project.
-For example, `core:clean` removes `build` folder only from the `core` project.
+- Factory Method – enemy creation  
+- Strategy – different attack behaviors  
+- Command – player input handling  
+- Observer – UI updates  
+- State – player and game states  
+- Decorator – buffs and power-ups  
+- Facade – game system coordination  
+- Singleton – global managers  
+
+## 🛠️ Tech Stack
+
+- Java  
+- LibGDX  
+- Gradle  
+
+## 📂 Project Structure
+
+- `core` – main game logic  
+- `lwjgl3` – desktop launcher  
+
+## 🎯 Project Goal
+
+This project is developed as part of a university course on Software Design Patterns, focusing on applying design patterns in a real game scenario.
+
+## 🚧 Status
+
+In development
