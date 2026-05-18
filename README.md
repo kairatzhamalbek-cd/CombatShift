@@ -2,8 +2,7 @@
 
 **2D Top-Down Wave Survival Game** built with **libGDX** (Java)
 
-![Game Screenshot](https://via.placeholder.com/800x400?text=Combat+Shift+Screenshot)  
-*(Скриншот будет добавлен позже)*
+
 
 ## 📝 Project Description
 
