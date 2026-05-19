@@ -7,20 +7,32 @@ public class AssetManagerHelper {
 
     public final AssetManager manager = new AssetManager();
 
-    // Текстуры карты
     public Texture groundTexture;
-    public Texture treeTexture;
+    public Texture treeMedium;
+    public Texture rock;
+    public Texture bushMedium;
+    public Texture bushLarge;
+    public Texture stumpShort;
+    public Texture stumpTall;
 
     public void load() {
-        // Загружаем текстуры
         manager.load("Top-Down Simple Summer_Ground 43.png", Texture.class);
-        manager.load("Top-Down Simple Summer_Prop - Tree Small.png", Texture.class);
+        manager.load("Top-Down Simple Summer_Prop - Tree Medium.png", Texture.class);
+        manager.load("Top-Down Simple Summer_Prop - Rock 01.png", Texture.class);
+        manager.load("Top-Down Simple Summer_Prop - Bushes Medium.png", Texture.class);
+        manager.load("Top-Down Simple Summer_Prop - Bushes Large.png", Texture.class);
+        manager.load("Top-Down Simple Summer_Prop - Tree Stump Short.png", Texture.class);
+        manager.load("Top-Down Simple Summer_Prop - Tree Stump Tall.png", Texture.class);
 
-        manager.finishLoading(); // Ждём, пока всё загрузится
+        manager.finishLoading();
 
-        // Получаем текстуры после загрузки
         groundTexture = manager.get("Top-Down Simple Summer_Ground 43.png", Texture.class);
-        treeTexture   = manager.get("Top-Down Simple Summer_Prop - Tree Small.png", Texture.class);
+        treeMedium    = manager.get("Top-Down Simple Summer_Prop - Tree Medium.png", Texture.class);
+        rock          = manager.get("Top-Down Simple Summer_Prop - Rock 01.png", Texture.class);
+        bushMedium    = manager.get("Top-Down Simple Summer_Prop - Bushes Medium.png", Texture.class);
+        bushLarge     = manager.get("Top-Down Simple Summer_Prop - Bushes Large.png", Texture.class);
+        stumpShort    = manager.get("Top-Down Simple Summer_Prop - Tree Stump Short.png", Texture.class);
+        stumpTall     = manager.get("Top-Down Simple Summer_Prop - Tree Stump Tall.png", Texture.class);
     }
 
     public void dispose() {
