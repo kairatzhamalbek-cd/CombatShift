@@ -1,42 +1,34 @@
 package com.pixelforge.combatshift.entity;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.pixelforge.combatshift.Constants;
 
 public class Player {
-
     private float x;
     private float y;
     private final float speed;
     private final Texture texture;
 
-    public Player(float x, float y, float speed) {
+    public Player(float x, float y) {
         this.x = x;
         this.y = y;
-        this.speed = speed;
+        this.speed = Constants.PLAYER_SPEED;
         this.texture = createTexture();
     }
 
     public void update(float delta) {
-        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-            y += speed * delta;
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-            y -= speed * delta;
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-            x -= speed * delta;
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-            x += speed * delta;
-        }
+        // Движение будет обрабатываться в GameScreen
+    }
+
+    public void move(float dx, float dy, float delta) {
+        x += dx * speed * delta;
+        y += dy * speed * delta;
     }
 
     public void render(SpriteBatch batch) {
-        batch.draw(texture, x, y, 32, 32);
+        batch.draw(texture, x, y, Constants.PLAYER_SIZE, Constants.PLAYER_SIZE);
     }
 
     private Texture createTexture() {
@@ -50,5 +42,13 @@ public class Player {
 
     public void dispose() {
         texture.dispose();
+    }
+
+    // Getters
+    public float getX() { return x; }
+    public float getY() { return y; }
+    public void setPosition(float x, float y) {
+        this.x = x;
+        this.y = y;
     }
 }
