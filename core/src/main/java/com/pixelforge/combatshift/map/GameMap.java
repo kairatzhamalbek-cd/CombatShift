@@ -66,7 +66,16 @@ public class GameMap {
             addObstacle(x, y, "stumpTall", 14, 12, 20);
         }
     }
-
+    public void drawGround(SpriteBatch batch) {
+        for (int x = 0; x < Constants.WORLD_WIDTH; x += 256) {
+            for (int y = 0; y < Constants.WORLD_HEIGHT; y += 256) {
+                batch.draw(assets.groundTexture, x, y, 256, 256);
+            }
+        }
+    }
+    public Array<String> getObstacleTypes() {
+        return obstacleTypes;
+    }
     private void addObstacle(float x, float y, String type, float collisionW, float collisionH, float offsetY) {
         obstacles.add(new Rectangle(x, y + offsetY, collisionW, collisionH));
         obstacleTypes.add(type);
