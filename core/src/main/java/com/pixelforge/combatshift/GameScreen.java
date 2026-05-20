@@ -16,12 +16,16 @@ import com.pixelforge.combatshift.map.GameMapInterface;
 
 public class GameScreen implements Screen {
 
+    private final MainGame game;
     private SpriteBatch batch;
     private OrthographicCamera camera;
     private Player player;
     private GameMapInterface map;
     private AssetManagerHelper assets;
 
+    public GameScreen(MainGame game) {
+        this.game = game;
+    }
     @Override
     public void show() {
         assets = new AssetManagerHelper();
