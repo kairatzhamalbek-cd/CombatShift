@@ -22,40 +22,63 @@ public class DesertMap implements GameMapInterface {
         obstacles.clear();
         obstacleTypes.clear();
 
-        // === Деревья (Мёртвые деревья пустыни) ===
+        float minDistance = 58f;   // Минимальное расстояние между объектами
+
+        // === Деревья ===
         for (int i = 0; i < 38; i++) {
-            float x = MathUtils.random(80, Constants.WORLD_WIDTH - 100);
-            float y = MathUtils.random(80, Constants.WORLD_HEIGHT - 100);
-            addObstacle(x, y, "tree", 22, 13, 26);
+            float x = MathUtils.random(100, Constants.WORLD_WIDTH - 120);
+            float y = MathUtils.random(100, Constants.WORLD_HEIGHT - 120);
+            if (isFarEnough(x, y, minDistance)) {
+                addObstacle(x, y, "tree", 22, 13, 26);
+            }
         }
 
         // === Камни Medium ===
         for (int i = 0; i < 22; i++) {
-            float x = MathUtils.random(60, Constants.WORLD_WIDTH - 80);
-            float y = MathUtils.random(60, Constants.WORLD_HEIGHT - 80);
-            addObstacle(x, y, "rockMedium", 38, 37, 20);
+            float x = MathUtils.random(80, Constants.WORLD_WIDTH - 100);
+            float y = MathUtils.random(80, Constants.WORLD_HEIGHT - 100);
+            if (isFarEnough(x, y, minDistance)) {
+                addObstacle(x, y, "rockMedium", 38, 37, 20);
+            }
         }
 
         // === Камни Small ===
         for (int i = 0; i < 18; i++) {
-            float x = MathUtils.random(50, Constants.WORLD_WIDTH - 70);
-            float y = MathUtils.random(50, Constants.WORLD_HEIGHT - 70);
-            addObstacle(x, y, "rockSmall", 43,42, 16);
+            float x = MathUtils.random(70, Constants.WORLD_WIDTH - 90);
+            float y = MathUtils.random(70, Constants.WORLD_HEIGHT - 90);
+            if (isFarEnough(x, y, minDistance)) {
+                addObstacle(x, y, "rockSmall", 43, 42, 16);
+            }
         }
 
-        // === Кусты Medium (пустынные) ===
+        // === Кусты Medium ===
         for (int i = 0; i < 32; i++) {
+            float x = MathUtils.random(60, Constants.WORLD_WIDTH - 80);
+            float y = MathUtils.random(60, Constants.WORLD_HEIGHT - 80);
+            if (isFarEnough(x, y, minDistance)) {
+                addObstacle(x, y, "bushMedium", 34, 14, 18);
+            }
+        }
+
+        // === Кусты Small ===
+        for (int i = 0; i < 28; i++) {
             float x = MathUtils.random(55, Constants.WORLD_WIDTH - 75);
             float y = MathUtils.random(55, Constants.WORLD_HEIGHT - 75);
-            addObstacle(x, y, "bushMedium", 34, 14, 18);
+            if (isFarEnough(x, y, minDistance)) {
+                addObstacle(x, y, "bushSmall", 28, 18, 16);
+            }
         }
+    }
 
-        // === Кусты Small (пустынные) ===
-        for (int i = 0; i < 28; i++) {
-            float x = MathUtils.random(45, Constants.WORLD_WIDTH - 65);
-            float y = MathUtils.random(45, Constants.WORLD_HEIGHT - 65);
-            addObstacle(x, y, "bushSmall", 28, 18, 16);
+    private boolean isFarEnough(float x, float y, float minDist) {
+        for (Rectangle obs : obstacles) {
+            float dx = obs.x - x;
+            float dy = obs.y - y;
+            if (dx * dx + dy * dy < minDist * minDist) {
+                return false;
+            }
         }
+        return true;
     }
 
     private void addObstacle(float x, float y, String type, float collisionW, float collisionH, float offsetY) {
@@ -63,18 +86,16 @@ public class DesertMap implements GameMapInterface {
         obstacleTypes.add(type);
     }
 
-    public Array<Rectangle> getObstacles() {
-        return obstacles;
-    }
-
-    public Array<String> getObstacleTypes() {
-        return obstacleTypes;
-    }
+    // Остальные методы без изменений
+    public Array<Rectangle> getObstacles() { return obstacles; }
+    public Array<String> getObstacleTypes() { return obstacleTypes; }
 
     public void drawGround(SpriteBatch batch) {
-        for (int x = 0; x < Constants.WORLD_WIDTH; x += 256) {
-            for (int y = 0; y < Constants.WORLD_HEIGHT; y += 256) {
-                batch.draw(assets.desertGround, x, y, 256, 256);
+        float tileSize = 100f;
+
+        for (int x = 0; x < Constants.WORLD_WIDTH; x += tileSize) {
+            for (int y = 0; y < Constants.WORLD_HEIGHT; y += tileSize) {
+                batch.draw(assets.desertGround, x, y, tileSize, tileSize);
             }
         }
     }
@@ -110,7 +131,6 @@ public class DesertMap implements GameMapInterface {
         for (Rectangle obstacle : obstacles) {
             if (obstacle.overlaps(bounds)) return true;
         }
-
         if (bounds.x < 0 || bounds.y < 0 ||
             bounds.x + bounds.width > Constants.WORLD_WIDTH ||
             bounds.y + bounds.height > Constants.WORLD_HEIGHT) {
