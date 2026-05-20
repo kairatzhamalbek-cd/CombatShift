@@ -24,53 +24,79 @@ public class GameMap implements GameMapInterface  {
         obstacles.clear();
         obstacleTypes.clear();
 
-        // === Деревья (Tree Medium) ===
-        for (int i = 0; i < 40; i++) {
-            float x = MathUtils.random(80, Constants.WORLD_WIDTH - 100);
-            float y = MathUtils.random(80, Constants.WORLD_HEIGHT - 100);
-            addObstacle(x, y, "tree", 20, 14, 28);
+        // Минимальное расстояние между объектами
+        float minDistance = 55f;
+
+        // === Деревья ===
+        for (int i = 0; i < 35; i++) {
+            float x = MathUtils.random(100, Constants.WORLD_WIDTH - 120);
+            float y = MathUtils.random(100, Constants.WORLD_HEIGHT - 120);
+            if (isFarEnough(x, y, minDistance)) {
+                addObstacle(x, y, "tree", 20, 14, 28);
+            }
         }
 
         // === Камни ===
-        for (int i = 0; i < 30; i++) {
-            float x = MathUtils.random(60, Constants.WORLD_WIDTH - 80);
-            float y = MathUtils.random(60, Constants.WORLD_HEIGHT - 80);
-            addObstacle(x, y, "rock", 20, 16, 22);
+        for (int i = 0; i < 28; i++) {
+            float x = MathUtils.random(80, Constants.WORLD_WIDTH - 100);
+            float y = MathUtils.random(80, Constants.WORLD_HEIGHT - 100);
+            if (isFarEnough(x, y, minDistance)) {
+                addObstacle(x, y, "rock", 20, 16, 22);
+            }
         }
 
         // === Кусты Medium ===
-        for (int i = 0; i < 35; i++) {
-            float x = MathUtils.random(50, Constants.WORLD_WIDTH - 70);
-            float y = MathUtils.random(50, Constants.WORLD_HEIGHT - 70);
-            addObstacle(x, y, "bushMedium", 22, 14, 20);
+        for (int i = 0; i < 32; i++) {
+            float x = MathUtils.random(70, Constants.WORLD_WIDTH - 90);
+            float y = MathUtils.random(70, Constants.WORLD_HEIGHT - 90);
+            if (isFarEnough(x, y, minDistance)) {
+                addObstacle(x, y, "bushMedium", 22, 14, 20);
+            }
         }
 
         // === Кусты Large ===
-        for (int i = 0; i < 25; i++) {
-            float x = MathUtils.random(55, Constants.WORLD_WIDTH - 75);
-            float y = MathUtils.random(55, Constants.WORLD_HEIGHT - 75);
-            addObstacle(x, y, "bushLarge", 35, 16, 24);
+        for (int i = 0; i < 22; i++) {
+            float x = MathUtils.random(80, Constants.WORLD_WIDTH - 100);
+            float y = MathUtils.random(80, Constants.WORLD_HEIGHT - 100);
+            if (isFarEnough(x, y, minDistance)) {
+                addObstacle(x, y, "bushLarge", 35, 16, 24);
+            }
         }
 
-        // === Пни Short ===
-        for (int i = 0; i < 20; i++) {
-            float x = MathUtils.random(45, Constants.WORLD_WIDTH - 65);
-            float y = MathUtils.random(45, Constants.WORLD_HEIGHT - 65);
-            addObstacle(x, y, "stumpShort", 16, 12, 18);
+        // === Пни ===
+        for (int i = 0; i < 18; i++) {
+            float x = MathUtils.random(60, Constants.WORLD_WIDTH - 80);
+            float y = MathUtils.random(60, Constants.WORLD_HEIGHT - 80);
+            if (isFarEnough(x, y, minDistance)) {
+                addObstacle(x, y, "stumpShort", 16, 12, 18);
+            }
         }
-
-        // === Пни Tall ===
-        for (int i = 0; i < 15; i++) {
-            float x = MathUtils.random(50, Constants.WORLD_WIDTH - 70);
-            float y = MathUtils.random(50, Constants.WORLD_HEIGHT - 70);
-            addObstacle(x, y, "stumpTall", 14, 12, 20);
+        for (int i = 0; i < 12; i++) {
+            float x = MathUtils.random(70, Constants.WORLD_WIDTH - 90);
+            float y = MathUtils.random(70, Constants.WORLD_HEIGHT - 90);
+            if (isFarEnough(x, y, minDistance)) {
+                addObstacle(x, y, "stumpTall", 14, 12, 20);
+            }
         }
     }
 
+    // Новый метод для проверки расстояния
+    private boolean isFarEnough(float x, float y, float minDist) {
+        for (Rectangle obs : obstacles) {
+            float dx = obs.x - x;
+            float dy = obs.y - y;
+            if (dx * dx + dy * dy < minDist * minDist) {
+                return false;
+            }
+        }
+        return true;
+    }
     public void drawGround(SpriteBatch batch) {
-        for (int x = 0; x < Constants.WORLD_WIDTH; x += 256) {
-            for (int y = 0; y < Constants.WORLD_HEIGHT; y += 256) {
-                batch.draw(assets.groundTexture, x, y, 256, 256);
+        float tileSize = 160f;
+
+        for (int x = 0; x < Constants.WORLD_WIDTH; x += tileSize) {
+            for (int y = 0; y < Constants.WORLD_HEIGHT; y += tileSize) {
+                batch.draw(assets.groundTexture, x, y, tileSize, tileSize);
             }
         }
     }
