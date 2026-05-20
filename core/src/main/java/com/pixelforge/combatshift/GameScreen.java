@@ -10,14 +10,16 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;           // ← Добавь эту строку
 import com.pixelforge.combatshift.assets.AssetManagerHelper;
 import com.pixelforge.combatshift.entity.Player;
+import com.pixelforge.combatshift.map.DesertMap;
 import com.pixelforge.combatshift.map.GameMap;
+import com.pixelforge.combatshift.map.GameMapInterface;
 
 public class GameScreen implements Screen {
 
     private SpriteBatch batch;
     private OrthographicCamera camera;
     private Player player;
-    private GameMap map;
+    private GameMapInterface map;
     private AssetManagerHelper assets;
 
     @Override
@@ -29,7 +31,8 @@ public class GameScreen implements Screen {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 1280, 720);
 
-        map = new GameMap(assets);
+        //map = new GameMap(assets);
+        map = new DesertMap(assets);
         player = new Player(Constants.WORLD_WIDTH / 2, Constants.WORLD_HEIGHT / 2);
     }
 
@@ -68,8 +71,16 @@ public class GameScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         // Ограничение камеры
-        float camX = MathUtils.clamp(player.getX(), camera.viewportWidth / 2f, Constants.WORLD_WIDTH - camera.viewportWidth / 2f);
-        float camY = MathUtils.clamp(player.getY(), camera.viewportHeight / 2f, Constants.WORLD_HEIGHT - camera.viewportHeight / 2f);
+        float camX = MathUtils.clamp(
+            player.getX(),
+            camera.viewportWidth / 2f,
+            Constants.WORLD_WIDTH - camera.viewportWidth / 2f
+        );
+        float camY = MathUtils.clamp(
+            player.getY(),
+            camera.viewportHeight / 2f,
+            Constants.WORLD_HEIGHT - camera.viewportHeight / 2f
+        );
 
         camera.position.set(camX, camY, 0);
         camera.update();
@@ -77,8 +88,8 @@ public class GameScreen implements Screen {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
-        // Рисуем землю
-        map.drawGround(batch);   // ← если есть такой метод, иначе оставь map.draw(batch) но без объектов
+        // Рисуем землю (в зависимости от локации)
+        map.drawGround(batch);
 
         // === Y-SORTING ===
         com.badlogic.gdx.utils.Array<SortableObject> drawList = new com.badlogic.gdx.utils.Array<>();
@@ -86,34 +97,57 @@ public class GameScreen implements Screen {
         // Добавляем игрока
         drawList.add(new SortableObject(player.getY(), () -> player.render(batch)));
 
-        // Добавляем все объекты карты
+        // Добавляем объекты карты
         for (int i = 0; i < map.getObstacles().size; i++) {
             Rectangle rect = map.getObstacles().get(i);
-            String type = map.getObstacleTypes().get(i); // нужно будет добавить этот метод
+            String type = map.getObstacleTypes().get(i);
 
             final Rectangle r = rect;
             final String t = type;
 
             drawList.add(new SortableObject(rect.y, () -> {
-                switch (t) {
-                    case "tree":
-                        batch.draw(assets.treeMedium, r.x - 50, r.y - 15, 128, 128);
-                        break;
-                    case "rock":
-                        batch.draw(assets.rock, r.x - 12, r.y - 10, 40, 40);
-                        break;
-                    case "bushMedium":
-                        batch.draw(assets.bushMedium, r.x - 18, r.y - 12, 45, 45);
-                        break;
-                    case "bushLarge":
-                        batch.draw(assets.bushLarge, r.x - 14, r.y - 16, 60, 55);
-                        break;
-                    case "stumpShort":
-                        batch.draw(assets.stumpShort, r.x - 14, r.y - 8, 35, 35);
-                        break;
-                    case "stumpTall":
-                        batch.draw(assets.stumpTall, r.x - 12, r.y - 6, 38, 42);
-                        break;
+
+                if (map instanceof com.pixelforge.combatshift.map.DesertMap) {
+                    // ==================== ПУСТЫНЯ ====================
+                    switch (t) {
+                        case "tree":
+                            batch.draw(assets.desertTreeMedium, r.x - 50, r.y - 15, 128, 128);
+                            break;
+                        case "rockMedium":
+                            batch.draw(assets.desertRockMedium, r.x - 18, r.y - 14, 55, 50);
+                            break;
+                        case "rockSmall":
+                            batch.draw(assets.desertRockSmall, r.x - 10, r.y - 10, 38, 35);
+                            break;
+                        case "bushMedium":
+                            batch.draw(assets.desertBushMedium, r.x - 16, r.y - 14, 50, 48);
+                            break;
+                        case "bushSmall":
+                            batch.draw(assets.desertBushSmall, r.x - 12, r.y - 10, 40, 38);
+                            break;
+                    }
+                } else {
+                    // ==================== ЛЕС (Forest) ====================
+                    switch (t) {
+                        case "tree":
+                            batch.draw(assets.treeMedium, r.x - 50, r.y - 15, 128, 128);
+                            break;
+                        case "rock":
+                            batch.draw(assets.rock, r.x - 12, r.y - 10, 40, 40);
+                            break;
+                        case "bushMedium":
+                            batch.draw(assets.bushMedium, r.x - 18, r.y - 12, 45, 45);
+                            break;
+                        case "bushLarge":
+                            batch.draw(assets.bushLarge, r.x - 14, r.y - 16, 60, 55);
+                            break;
+                        case "stumpShort":
+                            batch.draw(assets.stumpShort, r.x - 14, r.y - 8, 35, 35);
+                            break;
+                        case "stumpTall":
+                            batch.draw(assets.stumpTall, r.x - 12, r.y - 6, 38, 42);
+                            break;
+                    }
                 }
             }));
         }
@@ -128,6 +162,7 @@ public class GameScreen implements Screen {
 
         batch.end();
     }
+
 
     @Override
     public void dispose() {
