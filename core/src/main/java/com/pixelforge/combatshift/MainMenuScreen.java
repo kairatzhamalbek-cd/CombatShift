@@ -36,7 +36,7 @@ public class MainMenuScreen implements Screen {
     @Override
     public void show() {
         // Большой viewport для комфортного отображения
-        stage = new Stage(new FitViewport(1280, 720));
+        stage = new Stage(new com.badlogic.gdx.utils.viewport.StretchViewport(1280, 720));
         Gdx.input.setInputProcessor(stage);
 
         batch = new SpriteBatch();
