@@ -7,7 +7,7 @@ import com.badlogic.gdx.utils.Array;
 import com.pixelforge.combatshift.Constants;
 import com.pixelforge.combatshift.assets.AssetManagerHelper;
 
-public class GameMap {
+public class GameMap implements GameMapInterface  {
 
     private final AssetManagerHelper assets;
     private final Array<Rectangle> obstacles = new Array<>();
@@ -66,6 +66,7 @@ public class GameMap {
             addObstacle(x, y, "stumpTall", 14, 12, 20);
         }
     }
+
     public void drawGround(SpriteBatch batch) {
         for (int x = 0; x < Constants.WORLD_WIDTH; x += 256) {
             for (int y = 0; y < Constants.WORLD_HEIGHT; y += 256) {
