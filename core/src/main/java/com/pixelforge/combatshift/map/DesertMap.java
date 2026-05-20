@@ -26,35 +26,35 @@ public class DesertMap implements GameMapInterface {
         for (int i = 0; i < 38; i++) {
             float x = MathUtils.random(80, Constants.WORLD_WIDTH - 100);
             float y = MathUtils.random(80, Constants.WORLD_HEIGHT - 100);
-            addObstacle(x, y, "tree", 22, 15, 26);
+            addObstacle(x, y, "tree", 22, 13, 26);
         }
 
         // === Камни Medium ===
         for (int i = 0; i < 22; i++) {
             float x = MathUtils.random(60, Constants.WORLD_WIDTH - 80);
             float y = MathUtils.random(60, Constants.WORLD_HEIGHT - 80);
-            addObstacle(x, y, "rockMedium", 22, 16, 20);
+            addObstacle(x, y, "rockMedium", 38, 37, 20);
         }
 
         // === Камни Small ===
         for (int i = 0; i < 18; i++) {
             float x = MathUtils.random(50, Constants.WORLD_WIDTH - 70);
             float y = MathUtils.random(50, Constants.WORLD_HEIGHT - 70);
-            addObstacle(x, y, "rockSmall", 16, 12, 16);
+            addObstacle(x, y, "rockSmall", 43,42, 16);
         }
 
         // === Кусты Medium (пустынные) ===
         for (int i = 0; i < 32; i++) {
             float x = MathUtils.random(55, Constants.WORLD_WIDTH - 75);
             float y = MathUtils.random(55, Constants.WORLD_HEIGHT - 75);
-            addObstacle(x, y, "bushMedium", 20, 14, 18);
+            addObstacle(x, y, "bushMedium", 34, 14, 18);
         }
 
         // === Кусты Small (пустынные) ===
         for (int i = 0; i < 28; i++) {
             float x = MathUtils.random(45, Constants.WORLD_WIDTH - 65);
             float y = MathUtils.random(45, Constants.WORLD_HEIGHT - 65);
-            addObstacle(x, y, "bushSmall", 16, 12, 16);
+            addObstacle(x, y, "bushSmall", 28, 18, 16);
         }
     }
 
@@ -94,7 +94,7 @@ public class DesertMap implements GameMapInterface {
                     batch.draw(assets.desertRockMedium, rect.x - 18, rect.y - 14, 55, 50);
                     break;
                 case "rockSmall":
-                    batch.draw(assets.desertRockSmall, rect.x - 10, rect.y - 10, 100, 100);
+                    batch.draw(assets.desertRockSmall, rect.x - 17, rect.y - 10, 100, 100);
                     break;
                 case "bushMedium":
                     batch.draw(assets.desertBushMedium, rect.x - 16, rect.y - 14, 80, 80);
