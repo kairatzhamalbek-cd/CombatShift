@@ -111,19 +111,19 @@ public class GameScreen implements Screen {
                     // ==================== ПУСТЫНЯ ====================
                     switch (t) {
                         case "tree":
-                            batch.draw(assets.desertTreeMedium, r.x - 50, r.y - 15, 128, 128);
+                            batch.draw(assets.desertTreeMedium, r.x - 70, r.y - 28, 160, 160);
                             break;
                         case "rockMedium":
-                            batch.draw(assets.desertRockMedium, r.x - 18, r.y - 14, 55, 50);
+                            batch.draw(assets.desertRockMedium, r.x - 23, r.y - 14, 75, 75);
                             break;
                         case "rockSmall":
-                            batch.draw(assets.desertRockSmall, r.x - 10, r.y - 10, 38, 35);
+                            batch.draw(assets.desertRockSmall, r.x - 16, r.y - 14, 78, 78);
                             break;
                         case "bushMedium":
-                            batch.draw(assets.desertBushMedium, r.x - 16, r.y - 14, 50, 48);
+                            batch.draw(assets.desertBushMedium, r.x - 16, r.y - 20, 70, 70);
                             break;
                         case "bushSmall":
-                            batch.draw(assets.desertBushSmall, r.x - 12, r.y - 10, 40, 38);
+                            batch.draw(assets.desertBushSmall, r.x - 27, r.y - 18, 70, 70);
                             break;
                     }
                 } else {
