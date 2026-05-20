@@ -7,13 +7,13 @@ import com.badlogic.gdx.utils.Array;
 import com.pixelforge.combatshift.Constants;
 import com.pixelforge.combatshift.assets.AssetManagerHelper;
 
-public class DesertMap implements GameMapInterface {
+public class WinterMap implements GameMapInterface {
 
     private final AssetManagerHelper assets;
     private final Array<Rectangle> obstacles = new Array<>();
     private final Array<String> obstacleTypes = new Array<>();
 
-    public DesertMap(AssetManagerHelper assets) {
+    public WinterMap(AssetManagerHelper assets) {
         this.assets = assets;
         generateObstacles();
     }
@@ -22,41 +22,41 @@ public class DesertMap implements GameMapInterface {
         obstacles.clear();
         obstacleTypes.clear();
 
-        float minDistance = 58f;   // Минимальное расстояние между объектами
+        float minDistance = 60f;   // Чуть больше расстояние для зимы
 
         // === Деревья ===
-        for (int i = 0; i < 38; i++) {
+        for (int i = 0; i < 35; i++) {
             float x = MathUtils.random(100, Constants.WORLD_WIDTH - 120);
             float y = MathUtils.random(100, Constants.WORLD_HEIGHT - 120);
             if (isFarEnough(x, y, minDistance)) {
-                addObstacle(x, y, "tree", 22, 13, 26);
+                addObstacle(x, y, "tree", 24, 16, 30);
             }
         }
 
         // === Камни Medium ===
-        for (int i = 0; i < 22; i++) {
+        for (int i = 0; i < 25; i++) {
             float x = MathUtils.random(80, Constants.WORLD_WIDTH - 100);
             float y = MathUtils.random(80, Constants.WORLD_HEIGHT - 100);
             if (isFarEnough(x, y, minDistance)) {
-                addObstacle(x, y, "rockMedium", 38, 37, 20);
+                addObstacle(x, y, "rockMedium", 30, 20, 22);
             }
         }
 
         // === Камни Small ===
-        for (int i = 0; i < 18; i++) {
+        for (int i = 0; i < 20; i++) {
             float x = MathUtils.random(70, Constants.WORLD_WIDTH - 90);
             float y = MathUtils.random(70, Constants.WORLD_HEIGHT - 90);
             if (isFarEnough(x, y, minDistance)) {
-                addObstacle(x, y, "rockSmall", 43, 42, 16);
+                addObstacle(x, y, "rockSmall", 44, 24, 18);
             }
         }
 
         // === Кусты Medium ===
-        for (int i = 0; i < 32; i++) {
-            float x = MathUtils.random(60, Constants.WORLD_WIDTH - 80);
-            float y = MathUtils.random(60, Constants.WORLD_HEIGHT - 80);
+        for (int i = 0; i < 30; i++) {
+            float x = MathUtils.random(65, Constants.WORLD_WIDTH - 85);
+            float y = MathUtils.random(65, Constants.WORLD_HEIGHT - 85);
             if (isFarEnough(x, y, minDistance)) {
-                addObstacle(x, y, "bushMedium", 34, 14, 18);
+                addObstacle(x, y, "bushMedium", 44, 20, 20);
             }
         }
 
@@ -65,7 +65,7 @@ public class DesertMap implements GameMapInterface {
             float x = MathUtils.random(55, Constants.WORLD_WIDTH - 75);
             float y = MathUtils.random(55, Constants.WORLD_HEIGHT - 75);
             if (isFarEnough(x, y, minDistance)) {
-                addObstacle(x, y, "bushSmall", 28, 18, 16);
+                addObstacle(x, y, "bushSmall", 45, 20, 18);
             }
         }
     }
@@ -86,16 +86,15 @@ public class DesertMap implements GameMapInterface {
         obstacleTypes.add(type);
     }
 
-    // Остальные методы без изменений
     public Array<Rectangle> getObstacles() { return obstacles; }
     public Array<String> getObstacleTypes() { return obstacleTypes; }
 
     public void drawGround(SpriteBatch batch) {
-        float tileSize = 100f;
+        float tileSize = 90f;
 
         for (int x = 0; x < Constants.WORLD_WIDTH; x += tileSize) {
             for (int y = 0; y < Constants.WORLD_HEIGHT; y += tileSize) {
-                batch.draw(assets.desertGround, x, y, tileSize, tileSize);
+                batch.draw(assets.winterGround, x, y, tileSize, tileSize);
             }
         }
     }
@@ -109,19 +108,19 @@ public class DesertMap implements GameMapInterface {
 
             switch (type) {
                 case "tree":
-                    batch.draw(assets.desertTreeMedium, rect.x - 50, rect.y - 15, 400, 400);
+                    batch.draw(assets.winterTree, rect.x - 55, rect.y - 25, 140, 140);
                     break;
                 case "rockMedium":
-                    batch.draw(assets.desertRockMedium, rect.x - 18, rect.y - 14, 55, 50);
+                    batch.draw(assets.winterRockMedium, rect.x - 22, rect.y - 18, 65, 60);
                     break;
                 case "rockSmall":
-                    batch.draw(assets.desertRockSmall, rect.x - 17, rect.y - 10, 100, 100);
+                    batch.draw(assets.winterRockSmall, rect.x - 15, rect.y - 12, 48, 45);
                     break;
                 case "bushMedium":
-                    batch.draw(assets.desertBushMedium, rect.x - 16, rect.y - 14, 80, 80);
+                    batch.draw(assets.winterBushMedium, rect.x - 18, rect.y - 16, 55, 52);
                     break;
                 case "bushSmall":
-                    batch.draw(assets.desertBushSmall, rect.x - 12, rect.y - 10, 80, 80);
+                    batch.draw(assets.winterBushSmall, rect.x - 14, rect.y - 12, 45, 42);
                     break;
             }
         }

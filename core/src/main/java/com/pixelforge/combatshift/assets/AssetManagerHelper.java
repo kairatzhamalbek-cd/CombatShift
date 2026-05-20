@@ -21,6 +21,13 @@ public class AssetManagerHelper {
     public Texture desertRockSmall;
     public Texture desertBushMedium;
     public Texture desertBushSmall;
+    //-------------------------------------------------------------------- location-3
+    public Texture winterGround;
+    public Texture winterTree;
+    public Texture winterRockMedium;
+    public Texture winterRockSmall;
+    public Texture winterBushMedium;
+    public Texture winterBushSmall;
 
     public void load() {
         manager.load("Top-Down Simple Summer_Ground 43.png", Texture.class);
@@ -56,6 +63,22 @@ public class AssetManagerHelper {
         desertRockSmall    = manager.get("location2rocksmall-desert.png", Texture.class);
         desertBushMedium   = manager.get("location2-bushesmedium-desert-removebg-preview.png", Texture.class);
         desertBushSmall    = manager.get("location2-bushes-small-desrt-removebg-preview.png", Texture.class);
+        //-------------------------------------------------------------------------
+        manager.load("location3ground-winter.png", Texture.class);
+        manager.load("location3-tree-winter.png", Texture.class);
+        manager.load("location3-rock-medium-winter.png", Texture.class);
+        manager.load("location3rocksmall-winter.png", Texture.class);
+        manager.load("location3bushes-medium.png", Texture.class);
+        manager.load("location3-bushes-small.png", Texture.class);
+
+        manager.finishLoading();
+
+        winterGround       = manager.get("location3ground-winter.png", Texture.class);
+        winterTree         = manager.get("location3-tree-winter.png", Texture.class);
+        winterRockMedium   = manager.get("location3-rock-medium-winter.png", Texture.class);
+        winterRockSmall    = manager.get("location3rocksmall-winter.png", Texture.class);
+        winterBushMedium   = manager.get("location3bushes-medium.png", Texture.class);
+        winterBushSmall    = manager.get("location3-bushes-small.png", Texture.class);
 
     }
 
