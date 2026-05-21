@@ -7,24 +7,24 @@ import com.badlogic.gdx.utils.Array;
 import com.pixelforge.combatshift.Constants;
 import com.pixelforge.combatshift.assets.AssetManagerHelper;
 
-public class GameMap implements GameMapInterface  {
+public class GameMap implements GameMapInterface {
 
     private final AssetManagerHelper assets;
     private final Array<Rectangle> obstacles = new Array<>();
-
-    // Для удобства будем хранить тип объекта
     private final Array<String> obstacleTypes = new Array<>();
+
+    private com.badlogic.gdx.audio.Music music;   // ← Музыка леса
 
     public GameMap(AssetManagerHelper assets) {
         this.assets = assets;
         generateObstacles();
+        this.music = assets.forestMusic;   // Подключаем музыку
     }
 
     private void generateObstacles() {
         obstacles.clear();
         obstacleTypes.clear();
 
-        // Минимальное расстояние между объектами
         float minDistance = 55f;
 
         // === Деревья ===
@@ -80,7 +80,6 @@ public class GameMap implements GameMapInterface  {
         }
     }
 
-    // Новый метод для проверки расстояния
     private boolean isFarEnough(float x, float y, float minDist) {
         for (Rectangle obs : obstacles) {
             float dx = obs.x - x;
@@ -91,21 +90,37 @@ public class GameMap implements GameMapInterface  {
         }
         return true;
     }
+
+    private void addObstacle(float x, float y, String type, float collisionW, float collisionH, float offsetY) {
+        obstacles.add(new Rectangle(x, y + offsetY, collisionW, collisionH));
+        obstacleTypes.add(type);
+    }
+
+    // ==================== МУЗЫКА ====================
+    public void playMusic() {
+        if (music != null && !music.isPlaying()) {
+            music.play();
+        }
+    }
+
+    public void stopMusic() {
+        if (music != null && music.isPlaying()) {
+            music.stop();
+        }
+    }
+
+    // ==================== ОСТАЛЬНОЕ ====================
     public void drawGround(SpriteBatch batch) {
         float tileSize = 160f;
-
         for (int x = 0; x < Constants.WORLD_WIDTH; x += tileSize) {
             for (int y = 0; y < Constants.WORLD_HEIGHT; y += tileSize) {
                 batch.draw(assets.groundTexture, x, y, tileSize, tileSize);
             }
         }
     }
+
     public Array<String> getObstacleTypes() {
         return obstacleTypes;
-    }
-    private void addObstacle(float x, float y, String type, float collisionW, float collisionH, float offsetY) {
-        obstacles.add(new Rectangle(x, y + offsetY, collisionW, collisionH));
-        obstacleTypes.add(type);
     }
 
     public Array<Rectangle> getObstacles() {
@@ -152,8 +167,6 @@ public class GameMap implements GameMapInterface  {
         for (Rectangle obstacle : obstacles) {
             if (obstacle.overlaps(bounds)) return true;
         }
-
-        // Границы мира
         if (bounds.x < 0 || bounds.y < 0 ||
             bounds.x + bounds.width > Constants.WORLD_WIDTH ||
             bounds.y + bounds.height > Constants.WORLD_HEIGHT) {
@@ -162,5 +175,7 @@ public class GameMap implements GameMapInterface  {
         return false;
     }
 
-    public void dispose() {}
+    public void dispose() {
+        stopMusic();
+    }
 }
