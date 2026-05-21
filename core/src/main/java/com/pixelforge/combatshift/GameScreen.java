@@ -36,10 +36,10 @@ public class GameScreen implements Screen {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 1280, 720);
 
-        //map = new GameMap(assets);
+        map = new GameMap(assets);
         //map = new DesertMap(assets);
-        map = new WinterMap(assets);
-        player = new Player(Constants.WORLD_WIDTH / 2, Constants.WORLD_HEIGHT / 2);
+        //map = new WinterMap(assets);
+        player = new Player(Constants.WORLD_WIDTH / 2, Constants.WORLD_HEIGHT / 2, assets);
     }
 
     @Override
@@ -70,6 +70,8 @@ public class GameScreen implements Screen {
                 player.setPosition(newX, newY);
             }
         }
+
+        player.update(delta, dx, dy);   // ← Добавь эту строку
     }
 
     private void draw() {
