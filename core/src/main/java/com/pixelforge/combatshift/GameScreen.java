@@ -40,6 +40,11 @@ public class GameScreen implements Screen {
         //map = new DesertMap(assets);
         //map = new WinterMap(assets);
         player = new Player(Constants.WORLD_WIDTH / 2, Constants.WORLD_HEIGHT / 2, assets);
+
+        // Запускаем музыку только для леса
+        if (map instanceof GameMap) {
+            ((GameMap) map).playMusic();
+        }
     }
 
     @Override
@@ -185,6 +190,10 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
+        // Останавливаем музыку
+        if (map instanceof GameMap) {
+            ((GameMap) map).stopMusic();
+        }
         assets.dispose();
         map.dispose();           // можно оставить, даже если пустой
         batch.dispose();
