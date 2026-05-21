@@ -28,6 +28,17 @@ public class AssetManagerHelper {
     public Texture winterRockSmall;
     public Texture winterBushMedium;
     public Texture winterBushSmall;
+    //------------------------------------------------------------ character
+    public Texture playerIdle; // можно использовать одну из текстур как idle
+
+    public Texture moveUp1;
+    public Texture moveUp2;
+    public Texture moveDown1;
+    public Texture moveDown2;
+    public Texture moveLeft1;
+    public Texture moveLeft2;
+    public Texture moveRight1;
+    public Texture moveRight2;
 
     public void load() {
         manager.load("Top-Down Simple Summer_Ground 43.png", Texture.class);
@@ -79,6 +90,29 @@ public class AssetManagerHelper {
         winterRockSmall    = manager.get("location3rocksmall-winter.png", Texture.class);
         winterBushMedium   = manager.get("location3bushes-medium.png", Texture.class);
         winterBushSmall    = manager.get("location3-bushes-small.png", Texture.class);
+
+        //---------------------------------------------------------------------------------------------------
+        // ====================== ГЕРОЙ ======================
+        manager.load("move-top.png", Texture.class);
+        manager.load("move-top-top.png", Texture.class);
+        manager.load("move-bottom.png", Texture.class);
+        manager.load("move-bottom-bottom.png", Texture.class);
+        manager.load("move-left.png", Texture.class);
+        manager.load("move-left-left.png", Texture.class);
+        manager.load("move-right.png", Texture.class);
+        manager.load("move-right-right.png", Texture.class);
+
+        manager.finishLoading();
+
+// Загружаем текстуры героя
+        moveUp1    = manager.get("move-top.png", Texture.class);
+        moveUp2    = manager.get("move-top-top.png", Texture.class);
+        moveDown1  = manager.get("move-bottom.png", Texture.class);
+        moveDown2  = manager.get("move-bottom-bottom.png", Texture.class);
+        moveLeft1  = manager.get("move-left.png", Texture.class);
+        moveLeft2  = manager.get("move-left-left.png", Texture.class);
+        moveRight1 = manager.get("move-right.png", Texture.class);
+        moveRight2 = manager.get("move-right-right.png", Texture.class);
 
     }
 
