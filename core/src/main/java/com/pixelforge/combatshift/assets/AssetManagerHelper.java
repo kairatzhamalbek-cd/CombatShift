@@ -40,6 +40,10 @@ public class AssetManagerHelper {
     public Texture moveRight1;
     public Texture moveRight2;
 
+    //------------------------------------------ music forest
+    // Музыка
+    public com.badlogic.gdx.audio.Music forestMusic;
+
     public void load() {
         manager.load("Top-Down Simple Summer_Ground 43.png", Texture.class);
         manager.load("Top-Down Simple Summer_Prop - Tree Medium.png", Texture.class);
@@ -113,6 +117,19 @@ public class AssetManagerHelper {
         moveLeft2  = manager.get("move-left-left.png", Texture.class);
         moveRight1 = manager.get("move-right.png", Texture.class);
         moveRight2 = manager.get("move-right-right.png", Texture.class);
+
+        //-------------------------------------------------------------------
+        // ====================== МУЗЫКА ======================
+        manager.load("Rozen - Forest Temple (OST из игры _Shadows of Hyrule_) (muzmos.net).mp3",
+            com.badlogic.gdx.audio.Music.class);
+
+        manager.finishLoading();
+
+        forestMusic = manager.get("Rozen - Forest Temple (OST из игры _Shadows of Hyrule_) (muzmos.net).mp3",
+            com.badlogic.gdx.audio.Music.class);
+
+        forestMusic.setLooping(true);
+        forestMusic.setVolume(0.65f); // можно регулировать
 
     }
 
