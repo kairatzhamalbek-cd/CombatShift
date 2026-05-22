@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;           // ← Добавь эту строку
 import com.pixelforge.combatshift.assets.AssetManagerHelper;
+import com.pixelforge.combatshift.entity.Mob;
 import com.pixelforge.combatshift.entity.Player;
 import com.pixelforge.combatshift.map.DesertMap;
 import com.pixelforge.combatshift.map.GameMap;
@@ -77,10 +78,15 @@ public class GameScreen implements Screen {
         }
 
         player.update(delta, dx, dy);   // ← Добавь эту строку
+
+
+        if (map instanceof GameMap) {
+            ((GameMap) map).updateMobs(delta, player);
+        }
     }
 
     private void draw() {
-        Gdx.gl.glClearColor(0.07f, 0.14f, 0.09f, 1f);  // можно сделать разный цвет для каждой локации позже
+        Gdx.gl.glClearColor(0.07f, 0.14f, 0.09f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         // Ограничение камеры
@@ -102,7 +108,15 @@ public class GameScreen implements Screen {
         // Игрок
         drawList.add(new SortableObject(player.getY(), () -> player.render(batch)));
 
-        // Объекты
+        // Мобы (если это GameMap)
+        if (map instanceof GameMap) {
+            GameMap forestMap = (GameMap) map;
+            for (Mob mob : forestMap.getMobs()) {   // Нужно добавить getMobs() в GameMap
+                drawList.add(new SortableObject(mob.getY(), () -> mob.render(batch)));
+            }
+        }
+
+        // Объекты окружения (деревья, кусты и т.д.)
         for (int i = 0; i < map.getObstacles().size; i++) {
             Rectangle rect = map.getObstacles().get(i);
             String type = map.getObstacleTypes().get(i);
@@ -111,68 +125,22 @@ public class GameScreen implements Screen {
             final String t = type;
 
             drawList.add(new SortableObject(rect.y, () -> {
-
                 if (map instanceof com.pixelforge.combatshift.map.WinterMap) {
-                    // ==================== ЗИМА ====================
-                    switch (t) {
-                        case "tree":
-                            batch.draw(assets.winterTree, r.x - 60, r.y - 20, 140, 140);
-                            break;
-                        case "rockMedium":
-                            batch.draw(assets.winterRockMedium, r.x - 25, r.y - 20, 65, 60);
-                            break;
-                        case "rockSmall":
-                            batch.draw(assets.winterRockSmall, r.x - 20, r.y - 20, 80, 85);
-                            break;
-                        case "bushMedium":
-                            batch.draw(assets.winterBushMedium, r.x - 20, r.y - 18, 75, 52);
-                            break;
-                        case "bushSmall":
-                            batch.draw(assets.winterBushSmall, r.x - 14, r.y - 16, 65, 42);
-                            break;
-                    }
+                    // Зима...
+                    // (твой текущий код)
                 }
                 else if (map instanceof com.pixelforge.combatshift.map.DesertMap) {
-                    // ==================== ПУСТЫНЯ ====================
-                    switch (t) {
-                        case "tree":
-                            batch.draw(assets.desertTreeMedium, r.x - 70, r.y - 28, 160, 160);
-                            break;
-                        case "rockMedium":
-                            batch.draw(assets.desertRockMedium, r.x - 23, r.y - 14, 75, 75);
-                            break;
-                        case "rockSmall":
-                            batch.draw(assets.desertRockSmall, r.x - 16, r.y - 14, 78, 78);
-                            break;
-                        case "bushMedium":
-                            batch.draw(assets.desertBushMedium, r.x - 16, r.y - 20, 70, 70);
-                            break;
-                        case "bushSmall":
-                            batch.draw(assets.desertBushSmall, r.x - 27, r.y - 18, 70, 70);
-                            break;
-                    }
+                    // Пустыня...
                 }
                 else {
-                    // ==================== ЛЕС (Forest) ====================
+                    // Лес (Forest)
                     switch (t) {
-                        case "tree":
-                            batch.draw(assets.treeMedium, r.x - 50, r.y - 15, 128, 128);
-                            break;
-                        case "rock":
-                            batch.draw(assets.rock, r.x - 12, r.y - 10, 40, 40);
-                            break;
-                        case "bushMedium":
-                            batch.draw(assets.bushMedium, r.x - 18, r.y - 12, 45, 45);
-                            break;
-                        case "bushLarge":
-                            batch.draw(assets.bushLarge, r.x - 14, r.y - 16, 60, 55);
-                            break;
-                        case "stumpShort":
-                            batch.draw(assets.stumpShort, r.x - 14, r.y - 8, 35, 35);
-                            break;
-                        case "stumpTall":
-                            batch.draw(assets.stumpTall, r.x - 12, r.y - 6, 38, 42);
-                            break;
+                        case "tree":    batch.draw(assets.treeMedium, r.x - 50, r.y - 15, 128, 128); break;
+                        case "rock":    batch.draw(assets.rock, r.x - 12, r.y - 10, 40, 40); break;
+                        case "bushMedium": batch.draw(assets.bushMedium, r.x - 18, r.y - 12, 45, 45); break;
+                        case "bushLarge":  batch.draw(assets.bushLarge, r.x - 14, r.y - 16, 60, 55); break;
+                        case "stumpShort": batch.draw(assets.stumpShort, r.x - 14, r.y - 8, 35, 35); break;
+                        case "stumpTall":  batch.draw(assets.stumpTall, r.x - 12, r.y - 6, 38, 42); break;
                     }
                 }
             }));
@@ -186,7 +154,6 @@ public class GameScreen implements Screen {
 
         batch.end();
     }
-
 
     @Override
     public void dispose() {
