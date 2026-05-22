@@ -6,19 +6,23 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.pixelforge.combatshift.Constants;
 import com.pixelforge.combatshift.assets.AssetManagerHelper;
+import com.pixelforge.combatshift.entity.Mob;
+import com.pixelforge.combatshift.entity.Player;
 
 public class GameMap implements GameMapInterface {
 
     private final AssetManagerHelper assets;
     private final Array<Rectangle> obstacles = new Array<>();
     private final Array<String> obstacleTypes = new Array<>();
+    private final Array<Mob> mobs = new Array<>();       // ← Мобы (кабаны)
 
-    private com.badlogic.gdx.audio.Music music;   // ← Музыка леса
+    private com.badlogic.gdx.audio.Music music;
 
     public GameMap(AssetManagerHelper assets) {
         this.assets = assets;
         generateObstacles();
-        this.music = assets.forestMusic;   // Подключаем музыку
+        this.music = assets.forestMusic;
+        spawnMobs();                    // ← Спавним кабанов
     }
 
     private void generateObstacles() {
@@ -27,7 +31,7 @@ public class GameMap implements GameMapInterface {
 
         float minDistance = 55f;
 
-        // === Деревья ===
+        // Деревья
         for (int i = 0; i < 35; i++) {
             float x = MathUtils.random(100, Constants.WORLD_WIDTH - 120);
             float y = MathUtils.random(100, Constants.WORLD_HEIGHT - 120);
@@ -36,7 +40,7 @@ public class GameMap implements GameMapInterface {
             }
         }
 
-        // === Камни ===
+        // Камни
         for (int i = 0; i < 28; i++) {
             float x = MathUtils.random(80, Constants.WORLD_WIDTH - 100);
             float y = MathUtils.random(80, Constants.WORLD_HEIGHT - 100);
@@ -45,7 +49,7 @@ public class GameMap implements GameMapInterface {
             }
         }
 
-        // === Кусты Medium ===
+        // Кусты Medium
         for (int i = 0; i < 32; i++) {
             float x = MathUtils.random(70, Constants.WORLD_WIDTH - 90);
             float y = MathUtils.random(70, Constants.WORLD_HEIGHT - 90);
@@ -54,7 +58,7 @@ public class GameMap implements GameMapInterface {
             }
         }
 
-        // === Кусты Large ===
+        // Кусты Large
         for (int i = 0; i < 22; i++) {
             float x = MathUtils.random(80, Constants.WORLD_WIDTH - 100);
             float y = MathUtils.random(80, Constants.WORLD_HEIGHT - 100);
@@ -63,7 +67,7 @@ public class GameMap implements GameMapInterface {
             }
         }
 
-        // === Пни ===
+        // Пни
         for (int i = 0; i < 18; i++) {
             float x = MathUtils.random(60, Constants.WORLD_WIDTH - 80);
             float y = MathUtils.random(60, Constants.WORLD_HEIGHT - 80);
@@ -78,6 +82,17 @@ public class GameMap implements GameMapInterface {
                 addObstacle(x, y, "stumpTall", 14, 12, 20);
             }
         }
+    }
+
+    private void spawnMobs() {
+        mobs.clear();
+        // 6 кабанов для теста на первой локации
+        mobs.add(new Mob(450, 650, assets));
+        mobs.add(new Mob(850, 750, assets));
+        mobs.add(new Mob(1250, 550, assets));
+        mobs.add(new Mob(650, 950, assets));
+        mobs.add(new Mob(1050, 850, assets));
+        mobs.add(new Mob(300, 1100, assets));
     }
 
     private boolean isFarEnough(float x, float y, float minDist) {
@@ -98,18 +113,29 @@ public class GameMap implements GameMapInterface {
 
     // ==================== МУЗЫКА ====================
     public void playMusic() {
-        if (music != null && !music.isPlaying()) {
-            music.play();
-        }
+        if (music != null && !music.isPlaying()) music.play();
     }
 
     public void stopMusic() {
-        if (music != null && music.isPlaying()) {
-            music.stop();
+        if (music != null && music.isPlaying()) music.stop();
+    }
+
+    // ==================== МОБЫ ====================
+    public void updateMobs(float delta, Player player) {
+        for (Mob mob : mobs) {
+            // Простое движение в сторону игрока (для теста)
+            float dx = player.getX() - mob.getX(); // используем getX/getY из Mob
+            float dy = player.getY() - mob.getY();
+            float len = (float) Math.sqrt(dx * dx + dy * dy);
+            if (len > 0) {
+                dx /= len;
+                dy /= len;
+            }
+            mob.update(delta, dx, dy);
         }
     }
 
-    // ==================== ОСТАЛЬНОЕ ====================
+    // ==================== РЕНДЕР ====================
     public void drawGround(SpriteBatch batch) {
         float tileSize = 160f;
         for (int x = 0; x < Constants.WORLD_WIDTH; x += tileSize) {
@@ -119,48 +145,32 @@ public class GameMap implements GameMapInterface {
         }
     }
 
-    public Array<String> getObstacleTypes() {
-        return obstacleTypes;
-    }
-
-    public Array<Rectangle> getObstacles() {
-        return obstacles;
-    }
-
     public void draw(SpriteBatch batch) {
-        // Земля
-        for (int x = 0; x < Constants.WORLD_WIDTH; x += 256) {
-            for (int y = 0; y < Constants.WORLD_HEIGHT; y += 256) {
-                batch.draw(assets.groundTexture, x, y, 256, 256);
-            }
-        }
+        drawGround(batch);
 
-        // Объекты
+        // Объекты окружения
         for (int i = 0; i < obstacles.size; i++) {
             Rectangle rect = obstacles.get(i);
             String type = obstacleTypes.get(i);
 
             switch (type) {
-                case "tree":
-                    batch.draw(assets.treeMedium, rect.x - 50, rect.y - 15, 128, 128);
-                    break;
-                case "rock":
-                    batch.draw(assets.rock, rect.x - 12, rect.y - 10, 40, 40);
-                    break;
-                case "bushMedium":
-                    batch.draw(assets.bushMedium, rect.x - 18, rect.y - 12, 45, 45);
-                    break;
-                case "bushLarge":
-                    batch.draw(assets.bushLarge, rect.x - 14, rect.y - 16, 60, 55);
-                    break;
-                case "stumpShort":
-                    batch.draw(assets.stumpShort, rect.x - 14, rect.y - 8, 35, 35);
-                    break;
-                case "stumpTall":
-                    batch.draw(assets.stumpTall, rect.x - 12, rect.y - 6, 38, 42);
-                    break;
+                case "tree":    batch.draw(assets.treeMedium, rect.x - 50, rect.y - 15, 128, 128); break;
+                case "rock":    batch.draw(assets.rock, rect.x - 12, rect.y - 10, 40, 40); break;
+                case "bushMedium": batch.draw(assets.bushMedium, rect.x - 18, rect.y - 12, 45, 45); break;
+                case "bushLarge":  batch.draw(assets.bushLarge, rect.x - 14, rect.y - 16, 60, 55); break;
+                case "stumpShort": batch.draw(assets.stumpShort, rect.x - 14, rect.y - 8, 35, 35); break;
+                case "stumpTall":  batch.draw(assets.stumpTall, rect.x - 12, rect.y - 6, 38, 42); break;
             }
         }
+
+        // Рисуем мобов (кабанов)
+        for (Mob mob : mobs) {
+            mob.render(batch);
+        }
+    }
+    // Добавь в конец класса GameMap
+    public Array<Mob> getMobs() {
+        return mobs;
     }
 
     public boolean collides(Rectangle bounds) {
@@ -177,5 +187,11 @@ public class GameMap implements GameMapInterface {
 
     public void dispose() {
         stopMusic();
+        for (Mob mob : mobs) {
+            mob.dispose();
+        }
     }
+
+    public Array<Rectangle> getObstacles() { return obstacles; }
+    public Array<String> getObstacleTypes() { return obstacleTypes; }
 }
