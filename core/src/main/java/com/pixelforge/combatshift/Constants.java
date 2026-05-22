@@ -10,6 +10,6 @@ public final class Constants {
     public static final float WORLD_WIDTH = MAP_WIDTH_TILES * TILE_SIZE;
     public static final float WORLD_HEIGHT = MAP_HEIGHT_TILES * TILE_SIZE;
 
-    public static final float PLAYER_SIZE = 12f;
+    public static final float PLAYER_SIZE = 14f;
     public static final float PLAYER_SPEED = 250f;   // пикселей в секунду
 }
