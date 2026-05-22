@@ -44,6 +44,23 @@ public class AssetManagerHelper {
     // Музыка
     public com.badlogic.gdx.audio.Music forestMusic;
 
+    //------------------------------------------------------- Kaban
+    // ====================== МОБ КАБАН ======================
+    public Texture boarMoveUp;
+    public Texture boarMoveRight;
+    public Texture boarMoveLeft;
+    public Texture boarMoveDown;
+
+    public Texture boarAttackUp;
+    public Texture boarAttackRight;
+    public Texture boarAttackLeft;
+    public Texture boarAttackDown;
+
+    public Texture boarAttackUp2;
+    public Texture boarAttackRight2;
+    public Texture boarAttackLeft2;
+    public Texture boarAttackDown2;
+
     public void load() {
         manager.load("Top-Down Simple Summer_Ground 43.png", Texture.class);
         manager.load("Top-Down Simple Summer_Prop - Tree Medium.png", Texture.class);
@@ -130,6 +147,46 @@ public class AssetManagerHelper {
 
         forestMusic.setLooping(true);
         forestMusic.setVolume(0.65f); // можно регулировать
+        //--------------------------------------------------------------------------------------KABAN
+
+        // ====================== КАБАН ======================
+        manager.load("move-to-top.png", Texture.class);
+        manager.load("move-to-right.png", Texture.class);
+        manager.load("move-to-left.png", Texture.class);
+        manager.load("move-to-botoom.png", Texture.class);
+
+        manager.load("move-top-attack.png", Texture.class);
+        manager.load("move-right-attack.png", Texture.class);
+        manager.load("move-left-attack.png", Texture.class);
+        manager.load("move-bottom-attack.png", Texture.class);
+
+        manager.load("move-top-attack-attack.png", Texture.class);
+        manager.load("move-right-attack-attack.png", Texture.class);
+        manager.load("move-left-attack-attack.png", Texture.class);
+        manager.load("move-bottom-attack-attack.png", Texture.class);
+
+        manager.load("move-top-attack-attack-attack.png", Texture.class);
+        manager.load("move-right-attack-attack-attack.png", Texture.class);
+        manager.load("move-left-attack-attack-attack.png", Texture.class);
+        manager.load("move-bottom-attack-attack-attack.png", Texture.class);
+
+        manager.finishLoading();
+
+// Загрузка текстур кабана
+        boarMoveUp    = manager.get("move-to-top.png", Texture.class);
+        boarMoveRight = manager.get("move-to-right.png", Texture.class);
+        boarMoveLeft  = manager.get("move-to-left.png", Texture.class);
+        boarMoveDown  = manager.get("move-to-botoom.png", Texture.class);
+
+        boarAttackUp    = manager.get("move-top-attack.png", Texture.class);
+        boarAttackRight = manager.get("move-right-attack.png", Texture.class);
+        boarAttackLeft  = manager.get("move-left-attack.png", Texture.class);
+        boarAttackDown  = manager.get("move-bottom-attack.png", Texture.class);
+
+        boarAttackUp2    = manager.get("move-top-attack-attack.png", Texture.class);
+        boarAttackRight2 = manager.get("move-right-attack-attack.png", Texture.class);
+        boarAttackLeft2  = manager.get("move-left-attack-attack.png", Texture.class);
+        boarAttackDown2  = manager.get("move-bottom-attack-attack.png", Texture.class);
 
     }
 
