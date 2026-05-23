@@ -6,29 +6,19 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.pixelforge.combatshift.Constants;
 import com.pixelforge.combatshift.assets.AssetManagerHelper;
-import com.pixelforge.combatshift.entity.Mob;
-import com.pixelforge.combatshift.entity.Player;
 
 public class GameMap implements GameMapInterface {
 
     private final AssetManagerHelper assets;
     private final Array<Rectangle> obstacles = new Array<>();
     private final Array<String> obstacleTypes = new Array<>();
-    private final Array<Mob> mobs = new Array<>();       // ← Мобы (кабаны)
 
     private com.badlogic.gdx.audio.Music music;
-
-    // Раунды
-    private int currentRound = 1;
-    private final int maxRounds = 3;
-    private boolean inBreak = false;
-    private float breakTimer = 0f;
 
     public GameMap(AssetManagerHelper assets) {
         this.assets = assets;
         generateObstacles();
         this.music = assets.forestMusic;
-        spawnMobs();                    // ← Спавним кабанов
     }
 
     private void generateObstacles() {
@@ -90,44 +80,6 @@ public class GameMap implements GameMapInterface {
         }
     }
 
-    private void spawnMobs() {
-        mobs.clear();
-        int count = 5 + currentRound * 2;
-        for (int i = 0; i < count; i++) {
-            float x = MathUtils.random(150, Constants.WORLD_WIDTH - 150);
-            float y = MathUtils.random(150, Constants.WORLD_HEIGHT - 150);
-            mobs.add(new Mob(x, y, assets));
-        }
-    }
-    public void updateBreak(float delta, Player player) {
-        if (!inBreak) return;
-        breakTimer -= delta;
-        if (breakTimer <= 0) {
-            inBreak = false;
-            spawnMobs();
-            player.fullHeal();
-        }
-    }
-
-    public String getLocationName() { return "FOREST"; }
-    public int getCurrentRound() { return currentRound; }
-    public boolean isInBreak() { return inBreak; }
-    public float getBreakTimeLeft() { return breakTimer; }
-
-    public void checkRoundEnd() {
-        if (inBreak) return;
-        boolean allDead = true;
-        for (Mob m : mobs) if (!m.isDead()) allDead = false;
-
-        if (allDead) {
-            if (currentRound < maxRounds) {
-                currentRound++;
-                inBreak = true;
-                breakTimer = 15f;
-            }
-        }
-    }
-
     private boolean isFarEnough(float x, float y, float minDist) {
         for (Rectangle obs : obstacles) {
             float dx = obs.x - x;
@@ -153,22 +105,6 @@ public class GameMap implements GameMapInterface {
         if (music != null && music.isPlaying()) music.stop();
     }
 
-    // ==================== МОБЫ ====================
-    public void updateMobs(float delta, Player player) {
-        for (Mob mob : mobs) {
-            // Простое движение в сторону игрока (для теста)
-            float dx = player.getX() - mob.getX(); // используем getX/getY из Mob
-            float dy = player.getY() - mob.getY();
-            float len = (float) Math.sqrt(dx * dx + dy * dy);
-            if (len > 0) {
-                dx /= len;
-                dy /= len;
-            }
-            mob.update(delta, dx, dy);
-        }
-    }
-
-    // ==================== РЕНДЕР ====================
     public void drawGround(SpriteBatch batch) {
         float tileSize = 160f;
         for (int x = 0; x < Constants.WORLD_WIDTH; x += tileSize) {
@@ -181,7 +117,6 @@ public class GameMap implements GameMapInterface {
     public void draw(SpriteBatch batch) {
         drawGround(batch);
 
-        // Объекты окружения
         for (int i = 0; i < obstacles.size; i++) {
             Rectangle rect = obstacles.get(i);
             String type = obstacleTypes.get(i);
@@ -195,15 +130,6 @@ public class GameMap implements GameMapInterface {
                 case "stumpTall":  batch.draw(assets.stumpTall, rect.x - 12, rect.y - 6, 38, 42); break;
             }
         }
-
-        // Рисуем мобов (кабанов)
-        for (Mob mob : mobs) {
-            mob.render(batch);
-        }
-    }
-    // Добавь в конец класса GameMap
-    public Array<Mob> getMobs() {
-        return mobs;
     }
 
     public boolean collides(Rectangle bounds) {
@@ -220,9 +146,6 @@ public class GameMap implements GameMapInterface {
 
     public void dispose() {
         stopMusic();
-        for (Mob mob : mobs) {
-            mob.dispose();
-        }
     }
 
     public Array<Rectangle> getObstacles() { return obstacles; }

@@ -9,13 +9,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.pixelforge.combatshift.assets.AssetManagerHelper;
-import com.pixelforge.combatshift.entity.Mob;
 import com.pixelforge.combatshift.entity.Player;
 import com.pixelforge.combatshift.map.DesertMap;
 import com.pixelforge.combatshift.map.GameMap;
 import com.pixelforge.combatshift.map.GameMapInterface;
 import com.pixelforge.combatshift.map.WinterMap;
-import com.pixelforge.combatshift.ui.HudRenderer;
 
 public class GameScreen implements Screen {
 
@@ -25,8 +23,6 @@ public class GameScreen implements Screen {
     private Player player;
     private GameMapInterface map;
     private AssetManagerHelper assets;
-
-    private HudRenderer hud;   // ← Добавлено
 
     public GameScreen(MainGame game) {
         this.game = game;
@@ -41,10 +37,11 @@ public class GameScreen implements Screen {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 1280, 720);
 
-        map = new GameMap(assets);
-        player = new Player(Constants.WORLD_WIDTH / 2, Constants.WORLD_HEIGHT / 2, assets);
+        map = new GameMap(assets);           // Forest
+        // map = new DesertMap(assets);
+        // map = new WinterMap(assets);
 
-        hud = new HudRenderer();   // ← Инициализация HUD
+        player = new Player(Constants.WORLD_WIDTH / 2, Constants.WORLD_HEIGHT / 2);
 
         if (map instanceof GameMap) {
             ((GameMap) map).playMusic();
@@ -81,19 +78,13 @@ public class GameScreen implements Screen {
         }
 
         player.update(delta, dx, dy);
-
-        if (map instanceof GameMap) {
-            GameMap gm = (GameMap) map;
-            gm.updateMobs(delta, player);
-            gm.checkRoundEnd();
-            gm.updateBreak(delta, player);
-        }
     }
 
     private void draw() {
         Gdx.gl.glClearColor(0.07f, 0.14f, 0.09f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        // Камера следует за игроком с ограничением по краям карты
         float camX = MathUtils.clamp(player.getX(), camera.viewportWidth / 2f, Constants.WORLD_WIDTH - camera.viewportWidth / 2f);
         float camY = MathUtils.clamp(player.getY(), camera.viewportHeight / 2f, Constants.WORLD_HEIGHT - camera.viewportHeight / 2f);
 
@@ -103,21 +94,16 @@ public class GameScreen implements Screen {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
+        // 1. Земля (всегда на фоне)
         map.drawGround(batch);
 
+        // 2. Y-SORTING — правильный порядок по глубине
         com.badlogic.gdx.utils.Array<SortableObject> drawList = new com.badlogic.gdx.utils.Array<>();
 
+        // Игрок
         drawList.add(new SortableObject(player.getY(), () -> player.render(batch)));
 
-        if (map instanceof GameMap) {
-            GameMap forestMap = (GameMap) map;
-            for (Mob mob : forestMap.getMobs()) {
-                if (!mob.isDead()) {  // добавлено чтобы не рисовать мёртвых
-                    drawList.add(new SortableObject(mob.getY(), () -> mob.render(batch)));
-                }
-            }
-        }
-
+        // Все объекты карты (деревья, кусты, камни, пни)
         for (int i = 0; i < map.getObstacles().size; i++) {
             Rectangle rect = map.getObstacles().get(i);
             String type = map.getObstacleTypes().get(i);
@@ -126,36 +112,46 @@ public class GameScreen implements Screen {
 
             drawList.add(new SortableObject(rect.y, () -> {
                 if (map instanceof com.pixelforge.combatshift.map.WinterMap) {
-                    // Winter drawing...
+                    // Winter
+                    switch (t) {
+                        case "tree": batch.draw(assets.winterTree, r.x - 55, r.y - 25, 140, 140); break;
+                        case "rockMedium": batch.draw(assets.winterRockMedium, r.x - 22, r.y - 18, 65, 60); break;
+                        case "rockSmall": batch.draw(assets.winterRockSmall, r.x - 15, r.y - 12, 48, 45); break;
+                        case "bushMedium": batch.draw(assets.winterBushMedium, r.x - 18, r.y - 16, 55, 52); break;
+                        case "bushSmall": batch.draw(assets.winterBushSmall, r.x - 14, r.y - 12, 45, 42); break;
+                    }
                 } else if (map instanceof com.pixelforge.combatshift.map.DesertMap) {
-                    // Desert drawing...
+                    // Desert
+                    switch (t) {
+                        case "tree": batch.draw(assets.desertTreeMedium, r.x - 70, r.y - 28, 160, 160); break;
+                        case "rockMedium": batch.draw(assets.desertRockMedium, r.x - 23, r.y - 14, 75, 75); break;
+                        case "rockSmall": batch.draw(assets.desertRockSmall, r.x - 16, r.y - 14, 78, 78); break;
+                        case "bushMedium": batch.draw(assets.desertBushMedium, r.x - 16, r.y - 20, 70, 70); break;
+                        case "bushSmall": batch.draw(assets.desertBushSmall, r.x - 27, r.y - 18, 70, 70); break;
+                    }
                 } else {
                     // Forest
                     switch (t) {
-                        case "tree": batch.draw(assets.treeMedium, r.x - 50, r.y - 15, 128, 128); break;
-                        case "rock": batch.draw(assets.rock, r.x - 12, r.y - 10, 40, 40); break;
+                        case "tree":    batch.draw(assets.treeMedium, r.x - 50, r.y - 15, 128, 128); break;
+                        case "rock":    batch.draw(assets.rock, r.x - 12, r.y - 10, 40, 40); break;
                         case "bushMedium": batch.draw(assets.bushMedium, r.x - 18, r.y - 12, 45, 45); break;
-                        case "bushLarge": batch.draw(assets.bushLarge, r.x - 14, r.y - 16, 60, 55); break;
+                        case "bushLarge":  batch.draw(assets.bushLarge, r.x - 14, r.y - 16, 60, 55); break;
                         case "stumpShort": batch.draw(assets.stumpShort, r.x - 14, r.y - 8, 35, 35); break;
-                        case "stumpTall": batch.draw(assets.stumpTall, r.x - 12, r.y - 6, 38, 42); break;
+                        case "stumpTall":  batch.draw(assets.stumpTall, r.x - 12, r.y - 6, 38, 42); break;
                     }
                 }
             }));
         }
 
+        // Сортируем по Y (чем больше Y — тем дальше = рисуем раньше)
         drawList.sort((a, b) -> Float.compare(b.y, a.y));
 
+        // Рисуем всё в правильном порядке
         for (SortableObject obj : drawList) {
             obj.drawAction.run();
         }
 
         batch.end();
-
-        // HUD
-        if (map instanceof GameMap) {
-            GameMap gm = (GameMap) map;
-            hud.render(batch, player, gm.getLocationName(), gm.getCurrentRound(), camera.viewportWidth);
-        }
     }
 
     @Override
@@ -165,7 +161,6 @@ public class GameScreen implements Screen {
         map.dispose();
         batch.dispose();
         player.dispose();
-        if (hud != null) hud.dispose();
     }
 
     @Override public void resize(int width, int height) {}
