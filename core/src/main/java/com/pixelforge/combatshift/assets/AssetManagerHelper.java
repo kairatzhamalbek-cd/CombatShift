@@ -44,6 +44,33 @@ public class AssetManagerHelper {
     public Texture walkAttackSheet;
     public Texture walkSheet;
 
+    // ====================== МОБЫ (только для Forest) ======================
+    // Slime1
+    public Texture slimeAttackSheet;
+    public Texture slimeDeathSheet;
+    public Texture slimeHurtSheet;
+    public Texture slimeIdleSheet;
+    public Texture slimeRunSheet;
+    public Texture slimeWalkSheet;
+
+    // Vampire1
+    public Texture vampireAttackSheet;
+    public Texture vampireDeathSheet;
+    public Texture vampireHurtSheet;
+    public Texture vampireIdleSheet;
+    public Texture vampireRunSheet;
+    public Texture vampireWalkSheet;
+
+    // OrcBoss1
+    public Texture orcAttackSheet;
+    public Texture orcDeathSheet;
+    public Texture orcHurtSheet;
+    public Texture orcIdleSheet;
+    public Texture orcRunAttackSheet;
+    public Texture orcRunSheet;
+    public Texture orcWalkAttackSheet;
+    public Texture orcWalkSheet;
+
     public void load() {
         // ====================== FOREST ======================
         manager.load("Top-Down Simple Summer_Ground 43.png", Texture.class);
@@ -98,7 +125,7 @@ public class AssetManagerHelper {
         winterBushMedium   = manager.get("location3bushes-medium.png", Texture.class);
         winterBushSmall    = manager.get("location3-bushes-small.png", Texture.class);
 
-        // ====================== ГЕРОЙ (7 спрайтшитов) ======================
+        // ====================== ГЕРОЙ ======================
         manager.load("Swordsman_lvl3_attack_without_shadow.png", Texture.class);
         manager.load("Swordsman_lvl3_Hurt_without_shadow.png", Texture.class);
         manager.load("Swordsman_lvl3_Idle_without_shadow.png", Texture.class);
@@ -116,6 +143,58 @@ public class AssetManagerHelper {
         runSheet        = manager.get("Swordsman_lvl3_Run_without_shadow.png", Texture.class);
         walkAttackSheet = manager.get("Swordsman_lvl3_Walk_Attack_without_shadow.png", Texture.class);
         walkSheet       = manager.get("Swordsman_lvl3_Walk_without_shadow.png", Texture.class);
+
+        // ====================== МОБЫ ======================
+        // Slime1
+        manager.load("Slime1_Attack_without_shadow.png", Texture.class);
+        manager.load("Slime1_Death_without_shadow.png", Texture.class);
+        manager.load("Slime1_Hurt_without_shadow.png", Texture.class);
+        manager.load("Slime1_Idle_without_shadow.png", Texture.class);
+        manager.load("Slime1_Run_without_shadow.png", Texture.class);
+        manager.load("Slime1_Walk_without_shadow.png", Texture.class);
+
+        // Vampire1
+        manager.load("Vampires1_Attack_without_shadow.png", Texture.class);
+        manager.load("Vampires1_Death_without_shadow.png", Texture.class);
+        manager.load("Vampires1_Hurt_without_shadow.png", Texture.class);
+        manager.load("Vampires1_Idle_without_shadow.png", Texture.class);
+        manager.load("Vampires1_Run_without_shadow.png", Texture.class);
+        manager.load("Vampires1_Walk_without_shadow.png", Texture.class);
+
+        // OrcBoss1
+        manager.load("orc1_attack_without_shadow.png", Texture.class);
+        manager.load("orc1_death_without_shadow.png", Texture.class);
+        manager.load("orc1_hurt_without_shadow.png", Texture.class);
+        manager.load("orc1_idle_without_shadow.png", Texture.class);
+        manager.load("orc1_run_attack_front_without_shadow.png", Texture.class);
+        manager.load("orc1_run_without_shadow.png", Texture.class);
+        manager.load("orc1_walk_attack_front _without_shadow.png", Texture.class);
+        manager.load("orc1_walk_without_shadow.png", Texture.class);
+
+        manager.finishLoading();
+
+        slimeAttackSheet = manager.get("Slime1_Attack_without_shadow.png", Texture.class);
+        slimeDeathSheet  = manager.get("Slime1_Death_without_shadow.png", Texture.class);
+        slimeHurtSheet   = manager.get("Slime1_Hurt_without_shadow.png", Texture.class);
+        slimeIdleSheet   = manager.get("Slime1_Idle_without_shadow.png", Texture.class);
+        slimeRunSheet    = manager.get("Slime1_Run_without_shadow.png", Texture.class);
+        slimeWalkSheet   = manager.get("Slime1_Walk_without_shadow.png", Texture.class);
+
+        vampireAttackSheet = manager.get("Vampires1_Attack_without_shadow.png", Texture.class);
+        vampireDeathSheet  = manager.get("Vampires1_Death_without_shadow.png", Texture.class);
+        vampireHurtSheet   = manager.get("Vampires1_Hurt_without_shadow.png", Texture.class);
+        vampireIdleSheet   = manager.get("Vampires1_Idle_without_shadow.png", Texture.class);
+        vampireRunSheet    = manager.get("Vampires1_Run_without_shadow.png", Texture.class);
+        vampireWalkSheet   = manager.get("Vampires1_Walk_without_shadow.png", Texture.class);
+
+        orcAttackSheet      = manager.get("orc1_attack_without_shadow.png", Texture.class);
+        orcDeathSheet       = manager.get("orc1_death_without_shadow.png", Texture.class);
+        orcHurtSheet        = manager.get("orc1_hurt_without_shadow.png", Texture.class);
+        orcIdleSheet        = manager.get("orc1_idle_without_shadow.png", Texture.class);
+        orcRunAttackSheet   = manager.get("orc1_run_attack_front_without_shadow.png", Texture.class);
+        orcRunSheet         = manager.get("orc1_run_without_shadow.png", Texture.class);
+        orcWalkAttackSheet  = manager.get("orc1_walk_attack_front _without_shadow.png", Texture.class);
+        orcWalkSheet        = manager.get("orc1_walk_without_shadow.png", Texture.class);
 
         // ====================== МУЗЫКА ======================
         manager.load("Rozen - Forest Temple (OST из игры _Shadows of Hyrule_) (muzmos.net).mp3",
