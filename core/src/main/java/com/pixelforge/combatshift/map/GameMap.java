@@ -6,6 +6,10 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.pixelforge.combatshift.Constants;
 import com.pixelforge.combatshift.assets.AssetManagerHelper;
+import com.pixelforge.combatshift.entity.OrcBoss;
+import com.pixelforge.combatshift.entity.Player;
+import com.pixelforge.combatshift.entity.Slime;
+import com.pixelforge.combatshift.entity.Vampire;
 
 public class GameMap implements GameMapInterface {
 
@@ -15,19 +19,29 @@ public class GameMap implements GameMapInterface {
 
     private com.badlogic.gdx.audio.Music music;
 
+    private int currentRound = 1;
+    private final int maxRounds = 3;
+    private boolean inBreak = false;
+    private float breakTimer = 0f;
+
+    private final Array<Slime> slimes = new Array<>();
+    private final Array<Vampire> vampires = new Array<>();
+    private final Array<OrcBoss> orcBosses = new Array<>();
+
     public GameMap(AssetManagerHelper assets) {
         this.assets = assets;
         generateObstacles();
         this.music = assets.forestMusic;
+        startRound();
     }
 
+    // ====================== ТВОЙ СТАРЫЙ КОД (без изменений) ======================
     private void generateObstacles() {
         obstacles.clear();
         obstacleTypes.clear();
 
         float minDistance = 55f;
 
-        // Деревья
         for (int i = 0; i < 35; i++) {
             float x = MathUtils.random(100, Constants.WORLD_WIDTH - 120);
             float y = MathUtils.random(100, Constants.WORLD_HEIGHT - 120);
@@ -35,8 +49,6 @@ public class GameMap implements GameMapInterface {
                 addObstacle(x, y, "tree", 20, 14, 28);
             }
         }
-
-        // Камни
         for (int i = 0; i < 28; i++) {
             float x = MathUtils.random(80, Constants.WORLD_WIDTH - 100);
             float y = MathUtils.random(80, Constants.WORLD_HEIGHT - 100);
@@ -44,8 +56,6 @@ public class GameMap implements GameMapInterface {
                 addObstacle(x, y, "rock", 20, 16, 22);
             }
         }
-
-        // Кусты Medium
         for (int i = 0; i < 32; i++) {
             float x = MathUtils.random(70, Constants.WORLD_WIDTH - 90);
             float y = MathUtils.random(70, Constants.WORLD_HEIGHT - 90);
@@ -53,8 +63,6 @@ public class GameMap implements GameMapInterface {
                 addObstacle(x, y, "bushMedium", 22, 14, 20);
             }
         }
-
-        // Кусты Large
         for (int i = 0; i < 22; i++) {
             float x = MathUtils.random(80, Constants.WORLD_WIDTH - 100);
             float y = MathUtils.random(80, Constants.WORLD_HEIGHT - 100);
@@ -62,8 +70,6 @@ public class GameMap implements GameMapInterface {
                 addObstacle(x, y, "bushLarge", 35, 16, 24);
             }
         }
-
-        // Пни
         for (int i = 0; i < 18; i++) {
             float x = MathUtils.random(60, Constants.WORLD_WIDTH - 80);
             float y = MathUtils.random(60, Constants.WORLD_HEIGHT - 80);
@@ -84,9 +90,7 @@ public class GameMap implements GameMapInterface {
         for (Rectangle obs : obstacles) {
             float dx = obs.x - x;
             float dy = obs.y - y;
-            if (dx * dx + dy * dy < minDist * minDist) {
-                return false;
-            }
+            if (dx * dx + dy * dy < minDist * minDist) return false;
         }
         return true;
     }
@@ -96,7 +100,154 @@ public class GameMap implements GameMapInterface {
         obstacleTypes.add(type);
     }
 
-    // ==================== МУЗЫКА ====================
+    private void startRound() {
+        slimes.clear();
+        vampires.clear();
+        orcBosses.clear();
+
+        if (currentRound == 1) {
+            for (int i = 0; i < 16; i++) {
+                float x = MathUtils.random(150, Constants.WORLD_WIDTH - 150);
+                float y = MathUtils.random(150, Constants.WORLD_HEIGHT - 150);
+                slimes.add(new Slime(x, y, assets));
+            }
+        } else if (currentRound == 2) {
+            for (int i = 0; i < 10; i++) {
+                float x = MathUtils.random(150, Constants.WORLD_WIDTH - 150);
+                float y = MathUtils.random(150, Constants.WORLD_HEIGHT - 150);
+                slimes.add(new Slime(x, y, assets));
+            }
+            for (int i = 0; i < 6; i++) {
+                float x = MathUtils.random(150, Constants.WORLD_WIDTH - 150);
+                float y = MathUtils.random(150, Constants.WORLD_HEIGHT - 150);
+                vampires.add(new Vampire(x, y, assets));
+            }
+        } else if (currentRound == 3) {
+            orcBosses.add(new OrcBoss(Constants.WORLD_WIDTH / 2 + 200, Constants.WORLD_HEIGHT / 2, assets));
+        }
+    }
+
+    public void update(float delta, Player player) {
+        if (inBreak) {
+            breakTimer -= delta;
+            if (breakTimer <= 0) {
+                inBreak = false;
+                currentRound++;
+                if (currentRound <= maxRounds) {
+                    startRound();
+                    player.fullHeal();
+                }
+            }
+            return;
+        }
+
+        float attackRange = 55f;   // расстояние, с которого моб может атаковать
+
+        for (Slime s : slimes) if (!s.isDead()) {
+            float dx = player.getX() - s.getX();
+            float dy = player.getY() - s.getY();
+            float len = (float) Math.sqrt(dx * dx + dy * dy);
+            if (len > 0) { dx /= len; dy /= len; }
+            s.update(delta, dx, dy);
+
+            // Атака только если в радиусе и cooldown прошёл
+            if (len < attackRange && s.getAttackCooldown() <= 0) {
+                player.takeDamage(s.getDamage());
+                s.setAttackCooldown(1.2f);
+            }
+        }
+
+        for (Vampire v : vampires) if (!v.isDead()) {
+            float dx = player.getX() - v.getX();
+            float dy = player.getY() - v.getY();
+            float len = (float) Math.sqrt(dx * dx + dy * dy);
+            if (len > 0) { dx /= len; dy /= len; }
+            v.update(delta, dx, dy);
+
+            if (len < attackRange && v.getAttackCooldown() <= 0) {
+                player.takeDamage(v.getDamage());
+                v.setAttackCooldown(1.0f);
+            }
+        }
+
+        for (OrcBoss o : orcBosses) if (!o.isDead()) {
+            float dx = player.getX() - o.getX();
+            float dy = player.getY() - o.getY();
+            float len = (float) Math.sqrt(dx * dx + dy * dy);
+            if (len > 0) { dx /= len; dy /= len; }
+            o.update(delta, dx, dy);
+
+            if (len < attackRange && o.getAttackCooldown() <= 0) {
+                player.takeDamage(o.getDamage());
+                o.setAttackCooldown(1.5f);
+            }
+        }
+
+        // Атака игрока (ЛКМ)
+        if (player.isAttacking()) {
+            checkPlayerAttack(player);
+        }
+
+        checkRoundEnd();
+    }
+
+    private void checkPlayerAttack(Player player) {
+        float attackRadius = 80f;
+        float px = player.getX();
+        float py = player.getY();
+
+        for (Slime s : slimes) if (!s.isDead()) {
+            float dx = s.getX() - px;
+            float dy = s.getY() - py;
+            if (dx * dx + dy * dy < attackRadius * attackRadius) {
+                s.takeDamage(14);
+            }
+        }
+        for (Vampire v : vampires) if (!v.isDead()) {
+            float dx = v.getX() - px;
+            float dy = v.getY() - py;
+            if (dx * dx + dy * dy < attackRadius * attackRadius) {
+                v.takeDamage(14);
+            }
+        }
+        for (OrcBoss o : orcBosses) if (!o.isDead()) {
+            float dx = o.getX() - px;
+            float dy = o.getY() - py;
+            if (dx * dx + dy * dy < attackRadius * attackRadius) {
+                o.takeDamage(14);
+            }
+        }
+    }
+
+    private void checkRoundEnd() {
+        if (inBreak) return;
+        boolean allDead = true;
+        for (Slime s : slimes) if (!s.isDead()) allDead = false;
+        for (Vampire v : vampires) if (!v.isDead()) allDead = false;
+        for (OrcBoss o : orcBosses) if (!o.isDead()) allDead = false;
+
+        if (allDead) {
+            inBreak = true;
+            breakTimer = 10f;
+        }
+    }
+
+    // Методы HUD (без изменений)
+    public int getCurrentRound() { return currentRound; }
+    public boolean isInBreak() { return inBreak; }
+    public float getBreakTimeLeft() { return breakTimer; }
+    public int getAliveMobCount() {
+        int count = 0;
+        for (Slime s : slimes) if (!s.isDead()) count++;
+        for (Vampire v : vampires) if (!v.isDead()) count++;
+        for (OrcBoss o : orcBosses) if (!o.isDead()) count++;
+        return count;
+    }
+
+    public Array<Slime> getSlimes() { return slimes; }
+    public Array<Vampire> getVampires() { return vampires; }
+    public Array<OrcBoss> getOrcBosses() { return orcBosses; }
+
     public void playMusic() {
         if (music != null && !music.isPlaying()) music.play();
     }
@@ -130,6 +281,10 @@ public class GameMap implements GameMapInterface {
                 case "stumpTall":  batch.draw(assets.stumpTall, rect.x - 12, rect.y - 6, 38, 42); break;
             }
         }
+
+        for (Slime s : slimes) if (!s.isDead()) s.render(batch);
+        for (Vampire v : vampires) if (!v.isDead()) v.render(batch);
+        for (OrcBoss o : orcBosses) if (!o.isDead()) o.render(batch);
     }
 
     public boolean collides(Rectangle bounds) {
