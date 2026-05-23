@@ -18,6 +18,12 @@ public class GameMap implements GameMapInterface {
 
     private com.badlogic.gdx.audio.Music music;
 
+    // Раунды
+    private int currentRound = 1;
+    private final int maxRounds = 3;
+    private boolean inBreak = false;
+    private float breakTimer = 0f;
+
     public GameMap(AssetManagerHelper assets) {
         this.assets = assets;
         generateObstacles();
@@ -86,13 +92,40 @@ public class GameMap implements GameMapInterface {
 
     private void spawnMobs() {
         mobs.clear();
-        // 6 кабанов для теста на первой локации
-        mobs.add(new Mob(450, 650, assets));
-        mobs.add(new Mob(850, 750, assets));
-        mobs.add(new Mob(1250, 550, assets));
-        mobs.add(new Mob(650, 950, assets));
-        mobs.add(new Mob(1050, 850, assets));
-        mobs.add(new Mob(300, 1100, assets));
+        int count = 5 + currentRound * 2;
+        for (int i = 0; i < count; i++) {
+            float x = MathUtils.random(150, Constants.WORLD_WIDTH - 150);
+            float y = MathUtils.random(150, Constants.WORLD_HEIGHT - 150);
+            mobs.add(new Mob(x, y, assets));
+        }
+    }
+    public void updateBreak(float delta, Player player) {
+        if (!inBreak) return;
+        breakTimer -= delta;
+        if (breakTimer <= 0) {
+            inBreak = false;
+            spawnMobs();
+            player.fullHeal();
+        }
+    }
+
+    public String getLocationName() { return "FOREST"; }
+    public int getCurrentRound() { return currentRound; }
+    public boolean isInBreak() { return inBreak; }
+    public float getBreakTimeLeft() { return breakTimer; }
+
+    public void checkRoundEnd() {
+        if (inBreak) return;
+        boolean allDead = true;
+        for (Mob m : mobs) if (!m.isDead()) allDead = false;
+
+        if (allDead) {
+            if (currentRound < maxRounds) {
+                currentRound++;
+                inBreak = true;
+                breakTimer = 15f;
+            }
+        }
     }
 
     private boolean isFarEnough(float x, float y, float minDist) {
