@@ -11,6 +11,7 @@ import com.pixelforge.combatshift.assets.AssetManagerHelper;
 public class Mob {
     private float x, y;
     private final float speed = 90f;
+    private float hp = 40f;           // ← Добавлено
 
     private Animation<TextureRegion> walkUp, walkDown, walkLeft, walkRight;
     private Animation<TextureRegion> currentAnimation;
@@ -48,12 +49,14 @@ public class Mob {
                 currentAnimation = (dx > 0) ? walkRight : walkLeft;
             }
         }
+
+        x += dx * speed * delta;
+        y += dy * speed * delta;
     }
 
     public void render(SpriteBatch batch) {
         TextureRegion frame = currentAnimation.getKeyFrame(stateTime, true);
         float scale = 48f;
-
         batch.draw(frame, x - scale/2, y - scale/2 + 4, scale, scale);
     }
 
@@ -61,7 +64,15 @@ public class Mob {
         return new Rectangle(x - 18, y - 18, 36, 36);
     }
 
-    // ==================== ГЕТТЕРЫ ====================
+    // ==================== HP ====================
+    public void takeDamage(float damage) {
+        hp -= damage;
+    }
+
+    public boolean isDead() {           // ← Добавлен этот метод
+        return hp <= 0;
+    }
+
     public float getX() { return x; }
     public float getY() { return y; }
 
