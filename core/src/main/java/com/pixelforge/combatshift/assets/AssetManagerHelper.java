@@ -7,6 +7,7 @@ public class AssetManagerHelper {
 
     public final AssetManager manager = new AssetManager();
 
+    // Forest
     public Texture groundTexture;
     public Texture treeMedium;
     public Texture rock;
@@ -14,37 +15,37 @@ public class AssetManagerHelper {
     public Texture bushLarge;
     public Texture stumpShort;
     public Texture stumpTall;
-    //-------------------------------------------------------------------ЛОКАЦИЯ 2
+
+    // Desert
     public Texture desertGround;
     public Texture desertTreeMedium;
     public Texture desertRockMedium;
     public Texture desertRockSmall;
     public Texture desertBushMedium;
     public Texture desertBushSmall;
-    //-------------------------------------------------------------------- location-3
+
+    // Winter
     public Texture winterGround;
     public Texture winterTree;
     public Texture winterRockMedium;
     public Texture winterRockSmall;
     public Texture winterBushMedium;
     public Texture winterBushSmall;
-    //------------------------------------------------------------ character
-    public Texture playerIdle; // можно использовать одну из текстур как idle
 
-    public Texture moveUp1;
-    public Texture moveUp2;
-    public Texture moveDown1;
-    public Texture moveDown2;
-    public Texture moveLeft1;
-    public Texture moveLeft2;
-    public Texture moveRight1;
-    public Texture moveRight2;
-
-    //------------------------------------------ music forest
-    // Музыка
+    // Music
     public com.badlogic.gdx.audio.Music forestMusic;
 
+    // ====================== ГЕРОЙ (7 спрайтшитов) ======================
+    public Texture attackSheet;
+    public Texture hurtSheet;
+    public Texture idleSheet;
+    public Texture runAttackSheet;
+    public Texture runSheet;
+    public Texture walkAttackSheet;
+    public Texture walkSheet;
+
     public void load() {
+        // ====================== FOREST ======================
         manager.load("Top-Down Simple Summer_Ground 43.png", Texture.class);
         manager.load("Top-Down Simple Summer_Prop - Tree Medium.png", Texture.class);
         manager.load("Top-Down Simple Summer_Prop - Rock 01.png", Texture.class);
@@ -62,7 +63,8 @@ public class AssetManagerHelper {
         bushLarge     = manager.get("Top-Down Simple Summer_Prop - Bushes Large.png", Texture.class);
         stumpShort    = manager.get("Top-Down Simple Summer_Prop - Tree Stump Short.png", Texture.class);
         stumpTall     = manager.get("Top-Down Simple Summer_Prop - Tree Stump Tall.png", Texture.class);
-        //-------------------------------------------------------------------------
+
+        // ====================== DESERT ======================
         manager.load("location-2-ground-desert.jpg", Texture.class);
         manager.load("location2-treemedium-desert-removebg-preview.png", Texture.class);
         manager.load("location2rockmedium-desert-removebg-preview.png", Texture.class);
@@ -78,7 +80,8 @@ public class AssetManagerHelper {
         desertRockSmall    = manager.get("location2rocksmall-desert.png", Texture.class);
         desertBushMedium   = manager.get("location2-bushesmedium-desert-removebg-preview.png", Texture.class);
         desertBushSmall    = manager.get("location2-bushes-small-desrt-removebg-preview.png", Texture.class);
-        //-------------------------------------------------------------------------
+
+        // ====================== WINTER ======================
         manager.load("location3ground-winter.png", Texture.class);
         manager.load("location3-tree-winter.png", Texture.class);
         manager.load("location3-rock-medium-winter.png", Texture.class);
@@ -95,30 +98,25 @@ public class AssetManagerHelper {
         winterBushMedium   = manager.get("location3bushes-medium.png", Texture.class);
         winterBushSmall    = manager.get("location3-bushes-small.png", Texture.class);
 
-        //---------------------------------------------------------------------------------------------------
-        // ====================== ГЕРОЙ ======================
-        manager.load("move-top.png", Texture.class);
-        manager.load("move-top-top.png", Texture.class);
-        manager.load("move-bottom.png", Texture.class);
-        manager.load("move-bottom-bottom.png", Texture.class);
-        manager.load("move-left.png", Texture.class);
-        manager.load("move-left-left.png", Texture.class);
-        manager.load("move-right.png", Texture.class);
-        manager.load("move-right-right.png", Texture.class);
+        // ====================== ГЕРОЙ (7 спрайтшитов) ======================
+        manager.load("Swordsman_lvl3_attack_without_shadow.png", Texture.class);
+        manager.load("Swordsman_lvl3_Hurt_without_shadow.png", Texture.class);
+        manager.load("Swordsman_lvl3_Idle_without_shadow.png", Texture.class);
+        manager.load("Swordsman_lvl3_Run_Attack_without_shadow.png", Texture.class);
+        manager.load("Swordsman_lvl3_Run_without_shadow.png", Texture.class);
+        manager.load("Swordsman_lvl3_Walk_Attack_without_shadow.png", Texture.class);
+        manager.load("Swordsman_lvl3_Walk_without_shadow.png", Texture.class);
 
         manager.finishLoading();
 
-// Загружаем текстуры героя
-        moveUp1    = manager.get("move-top.png", Texture.class);
-        moveUp2    = manager.get("move-top-top.png", Texture.class);
-        moveDown1  = manager.get("move-bottom.png", Texture.class);
-        moveDown2  = manager.get("move-bottom-bottom.png", Texture.class);
-        moveLeft1  = manager.get("move-left.png", Texture.class);
-        moveLeft2  = manager.get("move-left-left.png", Texture.class);
-        moveRight1 = manager.get("move-right.png", Texture.class);
-        moveRight2 = manager.get("move-right-right.png", Texture.class);
+        attackSheet     = manager.get("Swordsman_lvl3_attack_without_shadow.png", Texture.class);
+        hurtSheet       = manager.get("Swordsman_lvl3_Hurt_without_shadow.png", Texture.class);
+        idleSheet       = manager.get("Swordsman_lvl3_Idle_without_shadow.png", Texture.class);
+        runAttackSheet  = manager.get("Swordsman_lvl3_Run_Attack_without_shadow.png", Texture.class);
+        runSheet        = manager.get("Swordsman_lvl3_Run_without_shadow.png", Texture.class);
+        walkAttackSheet = manager.get("Swordsman_lvl3_Walk_Attack_without_shadow.png", Texture.class);
+        walkSheet       = manager.get("Swordsman_lvl3_Walk_without_shadow.png", Texture.class);
 
-        //-------------------------------------------------------------------
         // ====================== МУЗЫКА ======================
         manager.load("Rozen - Forest Temple (OST из игры _Shadows of Hyrule_) (muzmos.net).mp3",
             com.badlogic.gdx.audio.Music.class);
@@ -127,10 +125,8 @@ public class AssetManagerHelper {
 
         forestMusic = manager.get("Rozen - Forest Temple (OST из игры _Shadows of Hyrule_) (muzmos.net).mp3",
             com.badlogic.gdx.audio.Music.class);
-
         forestMusic.setLooping(true);
-        forestMusic.setVolume(0.65f); // можно регулировать
-
+        forestMusic.setVolume(0.65f);
     }
 
     public void dispose() {
