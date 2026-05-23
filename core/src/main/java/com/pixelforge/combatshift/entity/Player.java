@@ -1,6 +1,6 @@
 package com.pixelforge.combatshift.entity;
 
-import com.badlogic.gdx.graphics.Texture;           // ← Вот эта строка была пропущена
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -28,49 +28,48 @@ public class Player {
     private boolean isAttacking = false;
     private float attackTimer = 0f;
 
+    // === HP и Stamina ===
+    private float hp = 100f;
+    private final float maxHp = 100f;
+    private float stamina = 100f;
+    private final float maxStamina = 100f;
+
     public Player(float startX, float startY, AssetManagerHelper assets) {
         this.x = startX;
         this.y = startY;
 
         float frameDuration = 0.08f;
 
-        // Idle
         idleDown  = createAnimation(assets.idleSheet, 0, 12, frameDuration);
         idleLeft  = createAnimation(assets.idleSheet, 1, 12, frameDuration);
         idleRight = createAnimation(assets.idleSheet, 2, 12, frameDuration);
         idleUp    = createAnimation(assets.idleSheet, 3, 4, frameDuration);
 
-        // Walk
         walkDown  = createAnimation(assets.walkSheet, 0, 6, frameDuration);
         walkLeft  = createAnimation(assets.walkSheet, 1, 6, frameDuration);
         walkRight = createAnimation(assets.walkSheet, 2, 6, frameDuration);
         walkUp    = createAnimation(assets.walkSheet, 3, 6, frameDuration);
 
-        // Run
         runDown  = createAnimation(assets.runSheet, 0, 8, frameDuration);
         runLeft  = createAnimation(assets.runSheet, 1, 8, frameDuration);
         runRight = createAnimation(assets.runSheet, 2, 8, frameDuration);
         runUp    = createAnimation(assets.runSheet, 3, 8, frameDuration);
 
-        // Attack
         attackDown  = createAnimation(assets.attackSheet, 0, 8, 0.07f);
         attackLeft  = createAnimation(assets.attackSheet, 1, 8, 0.07f);
         attackRight = createAnimation(assets.attackSheet, 2, 8, 0.07f);
         attackUp    = createAnimation(assets.attackSheet, 3, 8, 0.07f);
 
-        // Walk + Attack
         walkAttackDown  = createAnimation(assets.walkAttackSheet, 0, 6, 0.07f);
         walkAttackLeft  = createAnimation(assets.walkAttackSheet, 1, 6, 0.07f);
         walkAttackRight = createAnimation(assets.walkAttackSheet, 2, 6, 0.07f);
         walkAttackUp    = createAnimation(assets.walkAttackSheet, 3, 6, 0.07f);
 
-        // Run + Attack
         runAttackDown  = createAnimation(assets.runAttackSheet, 0, 8, 0.07f);
         runAttackLeft  = createAnimation(assets.runAttackSheet, 1, 8, 0.07f);
         runAttackRight = createAnimation(assets.runAttackSheet, 2, 8, 0.07f);
         runAttackUp    = createAnimation(assets.runAttackSheet, 3, 8, 0.07f);
 
-        // Hurt
         hurtDown  = createAnimation(assets.hurtSheet, 0, 5, 0.1f);
         hurtLeft  = createAnimation(assets.hurtSheet, 1, 5, 0.1f);
         hurtRight = createAnimation(assets.hurtSheet, 2, 5, 0.1f);
@@ -84,7 +83,6 @@ public class Player {
         int frameWidth = 64;
         int frameHeight = 64;
         int startY = row * frameHeight;
-
         for (int i = 0; i < frameCount; i++) {
             frames.add(new TextureRegion(sheet, i * frameWidth, startY, frameWidth, frameHeight));
         }
@@ -128,17 +126,21 @@ public class Player {
     public void render(SpriteBatch batch) {
         TextureRegion frame = currentAnimation.getKeyFrame(stateTime, true);
         float scale = Constants.PLAYER_SIZE * 3.3f;
-
         batch.draw(frame, x - scale / 2f, y - scale / 2f + 8, scale, scale);
     }
 
-    public void setPosition(float x, float y) {
-        this.x = x;
-        this.y = y;
-    }
-
+    public void setPosition(float x, float y) { this.x = x; this.y = y; }
     public float getX() { return x; }
     public float getY() { return y; }
+
+    // Методы для HUD и мобов
+    public float getHp() { return hp; }
+    public void fullHeal() { hp = maxHp; }
+    public float getStamina() { return stamina; }
+    public void takeDamage(float dmg) { hp = Math.max(0, hp - dmg); }
+
+    // Геттер для атаки (используется в GameMap)
+    public boolean isAttacking() { return isAttacking; }
 
     public void dispose() {}
 }
