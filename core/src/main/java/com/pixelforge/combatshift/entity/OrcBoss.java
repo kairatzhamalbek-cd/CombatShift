@@ -11,7 +11,8 @@ import com.pixelforge.combatshift.assets.AssetManagerHelper;
 
 public class OrcBoss {
     private float x, y;
-    private float hp = 210f;
+    private float hp = 220f;
+    private final float maxHp = 220f;
     private final float speed = 140f;
     private final float damage = 34f;
     private float scale = Constants.PLAYER_SIZE * 3f;
@@ -29,26 +30,29 @@ public class OrcBoss {
 
     private boolean isDead = false;
 
+    private final AssetManagerHelper assets;
+
     public OrcBoss(float startX, float startY, AssetManagerHelper assets) {
         this.x = startX;
         this.y = startY;
+        this.assets = assets;
 
         float fd = 0.1f;
 
-        idleDown  = createAnimation(assets.orcIdleSheet, 0, 4, fd);
-        idleUp    = createAnimation(assets.orcIdleSheet, 1, 4, fd);
-        idleLeft  = createAnimation(assets.orcIdleSheet, 2, 4, fd);
-        idleRight = createAnimation(assets.orcIdleSheet, 3, 4, fd);
+        idleDown = createAnimation(assets.orc1IdleSheet, 0, 4, fd);
+        idleUp = createAnimation(assets.orc1IdleSheet, 1, 4, fd);
+        idleLeft = createAnimation(assets.orc1IdleSheet, 2, 4, fd);
+        idleRight = createAnimation(assets.orc1IdleSheet, 3, 4, fd);
 
-        walkDown  = createAnimation(assets.orcWalkSheet, 0, 6, fd);
-        walkUp    = createAnimation(assets.orcWalkSheet, 1, 6, fd);
-        walkLeft  = createAnimation(assets.orcWalkSheet, 2, 6, fd);
-        walkRight = createAnimation(assets.orcWalkSheet, 3, 6, fd);
+        walkDown = createAnimation(assets.orc1WalkSheet, 0, 6, fd);
+        walkUp = createAnimation(assets.orc1WalkSheet, 1, 6, fd);
+        walkLeft = createAnimation(assets.orc1WalkSheet, 2, 6, fd);
+        walkRight = createAnimation(assets.orc1WalkSheet, 3, 6, fd);
 
-        attackDown  = createAnimation(assets.orcAttackSheet, 0, 8, 0.08f);
-        attackUp    = createAnimation(assets.orcAttackSheet, 1, 8, 0.08f);
-        attackLeft  = createAnimation(assets.orcAttackSheet, 2, 8, 0.08f);
-        attackRight = createAnimation(assets.orcAttackSheet, 3, 8, 0.08f);
+        attackDown = createAnimation(assets.orc1AttackSheet, 0, 8, 0.08f);
+        attackUp = createAnimation(assets.orc1AttackSheet, 1, 8, 0.08f);
+        attackLeft = createAnimation(assets.orc1AttackSheet, 2, 8, 0.08f);
+        attackRight = createAnimation(assets.orc1AttackSheet, 3, 8, 0.08f);
 
         currentAnimation = idleDown;
     }
@@ -92,22 +96,52 @@ public class OrcBoss {
     public void render(SpriteBatch batch) {
         if (isDead) return;
         TextureRegion frame = currentAnimation.getKeyFrame(stateTime, true);
-        batch.draw(frame, x - scale / 2f, y - scale / 2f, scale, scale);
-    }
+        float size = 64 * Constants.ORC_SCALE;
+        batch.draw(frame, x - size / 2f, y - size / 2f, size, size);    }
 
     public Rectangle getBounds() {
-        return new Rectangle(x - scale / 2f + 10, y - scale / 2f + 10, scale - 20, scale - 20);
-    }
+        float size = 64 * Constants.ORC_SCALE;
+        return new Rectangle(x - size / 2f + 10, y - size / 2f + 10, size - 20, size - 20);    }
 
     public void takeDamage(float dmg) {
         hp -= dmg;
         if (hp <= 0) isDead = true;
     }
 
-    public boolean isDead() { return isDead; }
-    public float getX() { return x; }
-    public float getY() { return y; }
-    public float getDamage() { return damage; }
-    public float getAttackCooldown() { return attackCooldown; }
-    public void setAttackCooldown(float time) { attackCooldown = time; }
+    public boolean isDead() {
+        return isDead;
+    }
+
+    public float getX() {
+        return x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
+    public float getDamage() {
+        return damage;
+    }
+
+    public float getAttackCooldown() {
+        return attackCooldown;
+    }
+
+    public void setAttackCooldown(float time) {
+        attackCooldown = time;
+    }
+
+    public void setPosition(float x, float y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public float getHp() {
+        return hp;
+    }
+
+    public float getMaxHp() {
+        return maxHp;
+    }
 }

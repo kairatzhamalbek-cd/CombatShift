@@ -9,20 +9,16 @@ import com.badlogic.gdx.utils.Array;
 import com.pixelforge.combatshift.Constants;
 import com.pixelforge.combatshift.assets.AssetManagerHelper;
 
-public class OrcBoss2 {
+public class Slime3 {
     private float x, y;
-    private float hp = 280f;
-    private final float maxHp = 280f;
-    private final float speed = 140f;
-    private final float damage = 40f;
-    private float scale = Constants.PLAYER_SIZE * 3f;
+    private float hp = 78f;
+    private final float maxHp = 78f;
+    private final float speed = 180f;
+    private final float damage = 11f;
     private float attackCooldown = 0f;
 
     private Animation<TextureRegion> currentAnimation;
     private float stateTime = 0f;
-
-    private boolean isFatigued = false;
-    private float fatigueTimer = 5f;
 
     private Animation<TextureRegion> idleDown, idleUp, idleLeft, idleRight;
     private Animation<TextureRegion> walkDown, walkUp, walkLeft, walkRight;
@@ -30,29 +26,29 @@ public class OrcBoss2 {
 
     private boolean isDead = false;
 
-    private final AssetManagerHelper assets;
+    private final AssetManagerHelper assets;   // ← ДОБАВЛЕНО
 
-    public OrcBoss2(float startX, float startY, AssetManagerHelper assets) {
+    public Slime3(float startX, float startY, AssetManagerHelper assets) {
         this.x = startX;
         this.y = startY;
-        this.assets = assets;
+        this.assets = assets;                  // ← ДОБАВЛЕНО
 
         float fd = 0.1f;
 
-        idleDown  = createAnimation(assets.orc2IdleSheet, 0, 4, fd);
-        idleUp    = createAnimation(assets.orc2IdleSheet, 1, 4, fd);
-        idleLeft  = createAnimation(assets.orc2IdleSheet, 2, 4, fd);
-        idleRight = createAnimation(assets.orc2IdleSheet, 3, 4, fd);
+        idleDown  = createAnimation(assets.slime3IdleSheet, 0, 6, fd);
+        idleUp    = createAnimation(assets.slime3IdleSheet, 1, 6, fd);
+        idleLeft  = createAnimation(assets.slime3IdleSheet, 2, 6, fd);
+        idleRight = createAnimation(assets.slime3IdleSheet, 3, 6, fd);
 
-        walkDown  = createAnimation(assets.orc2WalkSheet, 0, 6, fd);
-        walkUp    = createAnimation(assets.orc2WalkSheet, 1, 6, fd);
-        walkLeft  = createAnimation(assets.orc2WalkSheet, 2, 6, fd);
-        walkRight = createAnimation(assets.orc2WalkSheet, 3, 6, fd);
+        walkDown  = createAnimation(assets.slime3WalkSheet, 0, 8, fd);
+        walkUp    = createAnimation(assets.slime3WalkSheet, 1, 8, fd);
+        walkLeft  = createAnimation(assets.slime3WalkSheet, 2, 8, fd);
+        walkRight = createAnimation(assets.slime3WalkSheet, 3, 8, fd);
 
-        attackDown  = createAnimation(assets.orc2AttackSheet, 0, 8, 0.08f);
-        attackUp    = createAnimation(assets.orc2AttackSheet, 1, 8, 0.08f);
-        attackLeft  = createAnimation(assets.orc2AttackSheet, 2, 8, 0.08f);
-        attackRight = createAnimation(assets.orc2AttackSheet, 3, 8, 0.08f);
+        attackDown  = createAnimation(assets.slime3AttackSheet, 0, 11, 0.08f);
+        attackUp    = createAnimation(assets.slime3AttackSheet, 1, 11, 0.08f);
+        attackLeft  = createAnimation(assets.slime3AttackSheet, 2, 11, 0.08f);
+        attackRight = createAnimation(assets.slime3AttackSheet, 3, 11, 0.08f);
 
         currentAnimation = idleDown;
     }
@@ -71,23 +67,15 @@ public class OrcBoss2 {
         if (isDead) return;
         stateTime += delta;
         attackCooldown -= delta;
-        fatigueTimer -= delta;
 
-        if (fatigueTimer <= 0) {
-            isFatigued = !isFatigued;
-            fatigueTimer = isFatigued ? 2f : 5f;
-        }
-
-        float currentSpeed = isFatigued ? 0 : speed;
-
-        if (!isFatigued && (dx != 0 || dy != 0)) {
+        if (dx != 0 || dy != 0) {
             if (Math.abs(dy) > Math.abs(dx)) {
                 currentAnimation = (dy > 0) ? walkUp : walkDown;
             } else {
                 currentAnimation = (dx > 0) ? walkRight : walkLeft;
             }
-            x += dx * currentSpeed * delta;
-            y += dy * currentSpeed * delta;
+            x += dx * speed * delta;
+            y += dy * speed * delta;
         } else {
             currentAnimation = idleDown;
         }
@@ -96,12 +84,12 @@ public class OrcBoss2 {
     public void render(SpriteBatch batch) {
         if (isDead) return;
         TextureRegion frame = currentAnimation.getKeyFrame(stateTime, true);
-        float size = 64 * Constants.ORC_SCALE;
+        float size = 64 * Constants.SLIME_SCALE;
         batch.draw(frame, x - size / 2f, y - size / 2f, size, size);    }
 
     public Rectangle getBounds() {
-        float size = 64 * Constants.ORC_SCALE;
-        return new Rectangle(x - size / 2f + 10, y - size / 2f + 10, size - 20, size - 20);    }
+        return new Rectangle(x - 22, y - 22, 44, 44);
+    }
 
     public void takeDamage(float dmg) {
         hp -= dmg;

@@ -9,12 +9,12 @@ import com.badlogic.gdx.utils.Array;
 import com.pixelforge.combatshift.Constants;
 import com.pixelforge.combatshift.assets.AssetManagerHelper;
 
-public class OrcBoss2 {
+public class OrcBoss3 {
     private float x, y;
-    private float hp = 280f;
-    private final float maxHp = 280f;
+    private float hp = 350f;
+    private final float maxHp = 350f;
     private final float speed = 140f;
-    private final float damage = 40f;
+    private final float damage = 46f;
     private float scale = Constants.PLAYER_SIZE * 3f;
     private float attackCooldown = 0f;
 
@@ -32,27 +32,27 @@ public class OrcBoss2 {
 
     private final AssetManagerHelper assets;
 
-    public OrcBoss2(float startX, float startY, AssetManagerHelper assets) {
+    public OrcBoss3(float startX, float startY, AssetManagerHelper assets) {
         this.x = startX;
         this.y = startY;
         this.assets = assets;
 
         float fd = 0.1f;
 
-        idleDown  = createAnimation(assets.orc2IdleSheet, 0, 4, fd);
-        idleUp    = createAnimation(assets.orc2IdleSheet, 1, 4, fd);
-        idleLeft  = createAnimation(assets.orc2IdleSheet, 2, 4, fd);
-        idleRight = createAnimation(assets.orc2IdleSheet, 3, 4, fd);
+        idleDown  = createAnimation(assets.orc3IdleSheet, 0, 4, fd);
+        idleUp    = createAnimation(assets.orc3IdleSheet, 1, 4, fd);
+        idleLeft  = createAnimation(assets.orc3IdleSheet, 2, 4, fd);
+        idleRight = createAnimation(assets.orc3IdleSheet, 3, 4, fd);
 
-        walkDown  = createAnimation(assets.orc2WalkSheet, 0, 6, fd);
-        walkUp    = createAnimation(assets.orc2WalkSheet, 1, 6, fd);
-        walkLeft  = createAnimation(assets.orc2WalkSheet, 2, 6, fd);
-        walkRight = createAnimation(assets.orc2WalkSheet, 3, 6, fd);
+        walkDown  = createAnimation(assets.orc3WalkSheet, 0, 6, fd);
+        walkUp    = createAnimation(assets.orc3WalkSheet, 1, 6, fd);
+        walkLeft  = createAnimation(assets.orc3WalkSheet, 2, 6, fd);
+        walkRight = createAnimation(assets.orc3WalkSheet, 3, 6, fd);
 
-        attackDown  = createAnimation(assets.orc2AttackSheet, 0, 8, 0.08f);
-        attackUp    = createAnimation(assets.orc2AttackSheet, 1, 8, 0.08f);
-        attackLeft  = createAnimation(assets.orc2AttackSheet, 2, 8, 0.08f);
-        attackRight = createAnimation(assets.orc2AttackSheet, 3, 8, 0.08f);
+        attackDown  = createAnimation(assets.orc3AttackSheet, 0, 8, 0.08f);
+        attackUp    = createAnimation(assets.orc3AttackSheet, 1, 8, 0.08f);
+        attackLeft  = createAnimation(assets.orc3AttackSheet, 2, 8, 0.08f);
+        attackRight = createAnimation(assets.orc3AttackSheet, 3, 8, 0.08f);
 
         currentAnimation = idleDown;
     }
@@ -116,5 +116,4 @@ public class OrcBoss2 {
     public void setAttackCooldown(float time) { attackCooldown = time; }
     public void setPosition(float x, float y) { this.x = x; this.y = y; }
     public float getHp() { return hp; }
-    public float getMaxHp() { return maxHp; }
-}
+    public float getMaxHp() { return maxHp; }}
