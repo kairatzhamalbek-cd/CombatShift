@@ -7,14 +7,13 @@ import com.badlogic.gdx.utils.Array;
 public interface GameMapInterface {
 
     void drawGround(SpriteBatch batch);
-
     void draw(SpriteBatch batch);
-
     boolean collides(Rectangle bounds);
-
     Array<Rectangle> getObstacles();
-
     Array<String> getObstacleTypes();
-
     void dispose();
+
+    // === НОВЫЕ МЕТОДЫ ДЛЯ ПРОГРЕССИИ ===
+    int getCurrentRound();
+    boolean isInBreak();
 }

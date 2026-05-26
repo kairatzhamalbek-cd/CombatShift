@@ -35,7 +35,6 @@ public class GameMap implements GameMapInterface {
         startRound();
     }
 
-    // ====================== ТВОЙ СТАРЫЙ КОД (без изменений) ======================
     private void generateObstacles() {
         obstacles.clear();
         obstacleTypes.clear();
@@ -105,21 +104,25 @@ public class GameMap implements GameMapInterface {
         vampires.clear();
         orcBosses.clear();
 
+        float spawnMin = 80f;
+        float spawnMaxX = Constants.WORLD_WIDTH - 80f;
+        float spawnMaxY = Constants.WORLD_HEIGHT - 80f;
+
         if (currentRound == 1) {
             for (int i = 0; i < 16; i++) {
-                float x = MathUtils.random(150, Constants.WORLD_WIDTH - 150);
-                float y = MathUtils.random(150, Constants.WORLD_HEIGHT - 150);
+                float x = MathUtils.random(spawnMin, spawnMaxX);
+                float y = MathUtils.random(spawnMin, spawnMaxY);
                 slimes.add(new Slime(x, y, assets));
             }
         } else if (currentRound == 2) {
             for (int i = 0; i < 10; i++) {
-                float x = MathUtils.random(150, Constants.WORLD_WIDTH - 150);
-                float y = MathUtils.random(150, Constants.WORLD_HEIGHT - 150);
+                float x = MathUtils.random(spawnMin, spawnMaxX);
+                float y = MathUtils.random(spawnMin, spawnMaxY);
                 slimes.add(new Slime(x, y, assets));
             }
             for (int i = 0; i < 6; i++) {
-                float x = MathUtils.random(150, Constants.WORLD_WIDTH - 150);
-                float y = MathUtils.random(150, Constants.WORLD_HEIGHT - 150);
+                float x = MathUtils.random(spawnMin, spawnMaxX);
+                float y = MathUtils.random(spawnMin, spawnMaxY);
                 vampires.add(new Vampire(x, y, assets));
             }
         } else if (currentRound == 3) {
@@ -141,19 +144,22 @@ public class GameMap implements GameMapInterface {
             return;
         }
 
-        float attackRange = 55f;   // расстояние, с которого моб может атаковать
-
         for (Slime s : slimes) if (!s.isDead()) {
             float dx = player.getX() - s.getX();
             float dy = player.getY() - s.getY();
             float len = (float) Math.sqrt(dx * dx + dy * dy);
-            if (len > 0) { dx /= len; dy /= len; }
-            s.update(delta, dx, dy);
 
-            // Атака только если в радиусе и cooldown прошёл
-            if (len < attackRange && s.getAttackCooldown() <= 0) {
-                player.takeDamage(s.getDamage());
-                s.setAttackCooldown(1.2f);
+            if (len < Constants.MOB_DETECTION_RANGE && len > 0.1f) {
+                dx /= len;
+                dy /= len;
+                s.update(delta, dx, dy);
+
+                if (len < Constants.SLIME_ATTACK_RANGE && s.getAttackCooldown() <= 0) {
+                    player.takeDamage(s.getDamage());
+                    s.setAttackCooldown(1.2f);
+                }
+            } else {
+                s.update(delta, 0, 0);
             }
         }
 
@@ -161,12 +167,18 @@ public class GameMap implements GameMapInterface {
             float dx = player.getX() - v.getX();
             float dy = player.getY() - v.getY();
             float len = (float) Math.sqrt(dx * dx + dy * dy);
-            if (len > 0) { dx /= len; dy /= len; }
-            v.update(delta, dx, dy);
 
-            if (len < attackRange && v.getAttackCooldown() <= 0) {
-                player.takeDamage(v.getDamage());
-                v.setAttackCooldown(1.0f);
+            if (len < Constants.MOB_DETECTION_RANGE && len > 0.1f) {
+                dx /= len;
+                dy /= len;
+                v.update(delta, dx, dy);
+
+                if (len < Constants.VAMPIRE_ATTACK_RANGE && v.getAttackCooldown() <= 0) {
+                    player.takeDamage(v.getDamage());
+                    v.setAttackCooldown(1.0f);
+                }
+            } else {
+                v.update(delta, 0, 0);
             }
         }
 
@@ -174,25 +186,85 @@ public class GameMap implements GameMapInterface {
             float dx = player.getX() - o.getX();
             float dy = player.getY() - o.getY();
             float len = (float) Math.sqrt(dx * dx + dy * dy);
-            if (len > 0) { dx /= len; dy /= len; }
-            o.update(delta, dx, dy);
 
-            if (len < attackRange && o.getAttackCooldown() <= 0) {
-                player.takeDamage(o.getDamage());
-                o.setAttackCooldown(1.5f);
+            if (len < Constants.MOB_DETECTION_RANGE && len > 0.1f) {
+                dx /= len;
+                dy /= len;
+                o.update(delta, dx, dy);
+
+                if (len < Constants.ORC_ATTACK_RANGE && o.getAttackCooldown() <= 0) {
+                    player.takeDamage(o.getDamage());
+                    o.setAttackCooldown(1.5f);
+                }
+            } else {
+                o.update(delta, 0, 0);
             }
         }
 
-        // Атака игрока (ЛКМ)
-        if (player.isAttacking()) {
-            checkPlayerAttack(player);
-        }
-
+        separateMobs();
         checkRoundEnd();
     }
 
-    private void checkPlayerAttack(Player player) {
-        float attackRadius = 80f;
+    private void separateMobs() {
+        float minDist = 48f;
+
+        for (int i = 0; i < slimes.size; i++) {
+            for (int j = i + 1; j < slimes.size; j++) {
+                Slime a = slimes.get(i);
+                Slime b = slimes.get(j);
+                if (!a.isDead() && !b.isDead()) {
+                    float dx = a.getX() - b.getX();
+                    float dy = a.getY() - b.getY();
+                    float distSq = dx * dx + dy * dy;
+                    if (distSq < minDist * minDist && distSq > 0.1f) {
+                        float dist = (float) Math.sqrt(distSq);
+                        float push = (minDist - dist) / dist * 0.45f;
+                        a.setPosition(a.getX() + dx * push, a.getY() + dy * push);
+                        b.setPosition(b.getX() - dx * push, b.getY() - dy * push);
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < vampires.size; i++) {
+            for (int j = i + 1; j < vampires.size; j++) {
+                Vampire a = vampires.get(i);
+                Vampire b = vampires.get(j);
+                if (!a.isDead() && !b.isDead()) {
+                    float dx = a.getX() - b.getX();
+                    float dy = a.getY() - b.getY();
+                    float distSq = dx * dx + dy * dy;
+                    if (distSq < minDist * minDist && distSq > 0.1f) {
+                        float dist = (float) Math.sqrt(distSq);
+                        float push = (minDist - dist) / dist * 0.45f;
+                        a.setPosition(a.getX() + dx * push, a.getY() + dy * push);
+                        b.setPosition(b.getX() - dx * push, b.getY() - dy * push);
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < orcBosses.size; i++) {
+            for (int j = i + 1; j < orcBosses.size; j++) {
+                OrcBoss a = orcBosses.get(i);
+                OrcBoss b = orcBosses.get(j);
+                if (!a.isDead() && !b.isDead()) {
+                    float dx = a.getX() - b.getX();
+                    float dy = a.getY() - b.getY();
+                    float distSq = dx * dx + dy * dy;
+                    if (distSq < minDist * minDist && distSq > 0.1f) {
+                        float dist = (float) Math.sqrt(distSq);
+                        float push = (minDist - dist) / dist * 0.45f;
+                        a.setPosition(a.getX() + dx * push, a.getY() + dy * push);
+                        b.setPosition(b.getX() - dx * push, b.getY() - dy * push);
+                    }
+                }
+            }
+        }
+    }
+
+    public void checkPlayerAttack(Player player) {
+        float attackRadius = 45f;
         float px = player.getX();
         float py = player.getY();
 
@@ -200,21 +272,21 @@ public class GameMap implements GameMapInterface {
             float dx = s.getX() - px;
             float dy = s.getY() - py;
             if (dx * dx + dy * dy < attackRadius * attackRadius) {
-                s.takeDamage(14);
+                s.takeDamage(Constants.PLAYER_ATTACK_DAMAGE);   // ← Используем константу
             }
         }
         for (Vampire v : vampires) if (!v.isDead()) {
             float dx = v.getX() - px;
             float dy = v.getY() - py;
             if (dx * dx + dy * dy < attackRadius * attackRadius) {
-                v.takeDamage(14);
+                v.takeDamage(Constants.PLAYER_ATTACK_DAMAGE);
             }
         }
         for (OrcBoss o : orcBosses) if (!o.isDead()) {
             float dx = o.getX() - px;
             float dy = o.getY() - py;
             if (dx * dx + dy * dy < attackRadius * attackRadius) {
-                o.takeDamage(14);
+                o.takeDamage(Constants.PLAYER_ATTACK_DAMAGE);
             }
         }
     }
@@ -232,7 +304,6 @@ public class GameMap implements GameMapInterface {
         }
     }
 
-    // Методы HUD (без изменений)
     public int getCurrentRound() { return currentRound; }
     public boolean isInBreak() { return inBreak; }
     public float getBreakTimeLeft() { return breakTimer; }

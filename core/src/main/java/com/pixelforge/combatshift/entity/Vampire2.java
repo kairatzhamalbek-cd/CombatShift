@@ -9,12 +9,12 @@ import com.badlogic.gdx.utils.Array;
 import com.pixelforge.combatshift.Constants;
 import com.pixelforge.combatshift.assets.AssetManagerHelper;
 
-public class Slime {
+public class Vampire2 {
     private float x, y;
-    private float hp = 42f;
-    private final float maxHp = 42f;
-    private final float speed = 180f;
-    private final float damage = 5f;
+    private float hp = 82f;
+    private final float maxHp = 82f;
+    private final float speed = 220f;
+    private final float damage = 13f;
     private float attackCooldown = 0f;
 
     private Animation<TextureRegion> currentAnimation;
@@ -26,29 +26,29 @@ public class Slime {
 
     private boolean isDead = false;
 
-    private final AssetManagerHelper assets;   // ← ДОБАВЛЕНО
+    private final AssetManagerHelper assets;
 
-    public Slime(float startX, float startY, AssetManagerHelper assets) {
+    public Vampire2(float startX, float startY, AssetManagerHelper assets) {
         this.x = startX;
         this.y = startY;
-        this.assets = assets;                  // ← ДОБАВЛЕНО
+        this.assets = assets;
 
-        float fd = 0.1f;
+        float fd = 0.09f;
 
-        idleDown  = createAnimation(assets.slime1IdleSheet, 0, 6, fd);
-        idleUp    = createAnimation(assets.slime1IdleSheet, 1, 6, fd);
-        idleLeft  = createAnimation(assets.slime1IdleSheet, 2, 6, fd);
-        idleRight = createAnimation(assets.slime1IdleSheet, 3, 6, fd);
+        idleDown  = createAnimation(assets.vampire2IdleSheet, 0, 4, fd);
+        idleUp    = createAnimation(assets.vampire2IdleSheet, 1, 4, fd);
+        idleLeft  = createAnimation(assets.vampire2IdleSheet, 2, 4, fd);
+        idleRight = createAnimation(assets.vampire2IdleSheet, 3, 4, fd);
 
-        walkDown  = createAnimation(assets.slime1WalkSheet, 0, 8, fd);
-        walkUp    = createAnimation(assets.slime1WalkSheet, 1, 8, fd);
-        walkLeft  = createAnimation(assets.slime1WalkSheet, 2, 8, fd);
-        walkRight = createAnimation(assets.slime1WalkSheet, 3, 8, fd);
+        walkDown  = createAnimation(assets.vampire2WalkSheet, 0, 6, fd);
+        walkUp    = createAnimation(assets.vampire2WalkSheet, 1, 6, fd);
+        walkLeft  = createAnimation(assets.vampire2WalkSheet, 2, 6, fd);
+        walkRight = createAnimation(assets.vampire2WalkSheet, 3, 6, fd);
 
-        attackDown  = createAnimation(assets.slime1AttackSheet, 0, 10, 0.08f);
-        attackUp    = createAnimation(assets.slime1AttackSheet, 1, 10, 0.08f);
-        attackLeft  = createAnimation(assets.slime1AttackSheet, 2, 10, 0.08f);
-        attackRight = createAnimation(assets.slime1AttackSheet, 3, 10, 0.08f);
+        attackDown  = createAnimation(assets.vampire2AttackSheet, 0, 12, 0.07f);
+        attackUp    = createAnimation(assets.vampire2AttackSheet, 1, 12, 0.07f);
+        attackLeft  = createAnimation(assets.vampire2AttackSheet, 2, 12, 0.07f);
+        attackRight = createAnimation(assets.vampire2AttackSheet, 3, 12, 0.07f);
 
         currentAnimation = idleDown;
     }
@@ -84,11 +84,10 @@ public class Slime {
     public void render(SpriteBatch batch) {
         if (isDead) return;
         TextureRegion frame = currentAnimation.getKeyFrame(stateTime, true);
-        float size = 64 * Constants.SLIME_SCALE;
+        float size = 64 * Constants.VAMPIRE_SCALE;
         batch.draw(frame, x - size / 2f, y - size / 2f, size, size);    }
-    public Rectangle getBounds() {
-        return new Rectangle(x - 22, y - 22, 44, 44);
-    }
+
+    public Rectangle getBounds() { return new Rectangle(x - 22, y - 22, 44, 44); }
 
     public void takeDamage(float dmg) {
         hp -= dmg;
@@ -103,4 +102,5 @@ public class Slime {
     public void setAttackCooldown(float time) { attackCooldown = time; }
     public void setPosition(float x, float y) { this.x = x; this.y = y; }
     public float getHp() { return hp; }
-    public float getMaxHp() { return maxHp; }}
+    public float getMaxHp() { return maxHp; }
+}

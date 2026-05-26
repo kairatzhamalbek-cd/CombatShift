@@ -11,7 +11,8 @@ import com.pixelforge.combatshift.assets.AssetManagerHelper;
 
 public class Vampire {
     private float x, y;
-    private float hp = 56f;
+    private float hp = 62f;
+    private final float maxHp = 62f;
     private final float speed = 220f;
     private final float damage = 10f;
     private float attackCooldown = 0f;
@@ -25,26 +26,29 @@ public class Vampire {
 
     private boolean isDead = false;
 
+    private final AssetManagerHelper assets;   // ← ДОБАВЛЕНО
+
     public Vampire(float startX, float startY, AssetManagerHelper assets) {
         this.x = startX;
         this.y = startY;
+        this.assets = assets;                  // ← ДОБАВЛЕНО
 
         float fd = 0.09f;
 
-        idleDown  = createAnimation(assets.vampireIdleSheet, 0, 4, fd);
-        idleUp    = createAnimation(assets.vampireIdleSheet, 1, 4, fd);
-        idleLeft  = createAnimation(assets.vampireIdleSheet, 2, 4, fd);
-        idleRight = createAnimation(assets.vampireIdleSheet, 3, 4, fd);
+        idleDown  = createAnimation(assets.vampire1IdleSheet, 0, 4, fd);
+        idleUp    = createAnimation(assets.vampire1IdleSheet, 1, 4, fd);
+        idleLeft  = createAnimation(assets.vampire1IdleSheet, 2, 4, fd);
+        idleRight = createAnimation(assets.vampire1IdleSheet, 3, 4, fd);
 
-        walkDown  = createAnimation(assets.vampireWalkSheet, 0, 6, fd);
-        walkUp    = createAnimation(assets.vampireWalkSheet, 1, 6, fd);
-        walkLeft  = createAnimation(assets.vampireWalkSheet, 2, 6, fd);
-        walkRight = createAnimation(assets.vampireWalkSheet, 3, 6, fd);
+        walkDown  = createAnimation(assets.vampire1WalkSheet, 0, 6, fd);
+        walkUp    = createAnimation(assets.vampire1WalkSheet, 1, 6, fd);
+        walkLeft  = createAnimation(assets.vampire1WalkSheet, 2, 6, fd);
+        walkRight = createAnimation(assets.vampire1WalkSheet, 3, 6, fd);
 
-        attackDown  = createAnimation(assets.vampireAttackSheet, 0, 12, 0.07f);
-        attackUp    = createAnimation(assets.vampireAttackSheet, 1, 12, 0.07f);
-        attackLeft  = createAnimation(assets.vampireAttackSheet, 2, 12, 0.07f);
-        attackRight = createAnimation(assets.vampireAttackSheet, 3, 12, 0.07f);
+        attackDown  = createAnimation(assets.vampire1AttackSheet, 0, 12, 0.07f);
+        attackUp    = createAnimation(assets.vampire1AttackSheet, 1, 12, 0.07f);
+        attackLeft  = createAnimation(assets.vampire1AttackSheet, 2, 12, 0.07f);
+        attackRight = createAnimation(assets.vampire1AttackSheet, 3, 12, 0.07f);
 
         currentAnimation = idleDown;
     }
@@ -80,8 +84,8 @@ public class Vampire {
     public void render(SpriteBatch batch) {
         if (isDead) return;
         TextureRegion frame = currentAnimation.getKeyFrame(stateTime, true);
-        batch.draw(frame, x - 32, y - 32, 64, 64);
-    }
+        float size = 64 * Constants.VAMPIRE_SCALE;
+        batch.draw(frame, x - size / 2f, y - size / 2f, size, size);    }
 
     public Rectangle getBounds() { return new Rectangle(x - 22, y - 22, 44, 44); }
 
@@ -96,4 +100,7 @@ public class Vampire {
     public float getDamage() { return damage; }
     public float getAttackCooldown() { return attackCooldown; }
     public void setAttackCooldown(float time) { attackCooldown = time; }
+    public void setPosition(float x, float y) { this.x = x; this.y = y; }
+    public float getHp() { return hp; }
+    public float getMaxHp() { return maxHp; }
 }
