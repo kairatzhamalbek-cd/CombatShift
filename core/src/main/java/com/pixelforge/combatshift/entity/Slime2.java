@@ -11,9 +11,10 @@ import com.pixelforge.combatshift.assets.AssetManagerHelper;
 
 public class Slime2 {
     private float x, y;
-    private float hp = 45f;           // больше чем Slime1
+    private float hp = 58f;
+    private final float maxHp = 58f;
     private final float speed = 180f;
-    private final float damage = 8f;  // больше урона
+    private final float damage = 8f;
     private float attackCooldown = 0f;
 
     private Animation<TextureRegion> currentAnimation;
@@ -25,9 +26,12 @@ public class Slime2 {
 
     private boolean isDead = false;
 
+    private final AssetManagerHelper assets;
+
     public Slime2(float startX, float startY, AssetManagerHelper assets) {
         this.x = startX;
         this.y = startY;
+        this.assets = assets;
 
         float fd = 0.1f;
 
@@ -80,8 +84,8 @@ public class Slime2 {
     public void render(SpriteBatch batch) {
         if (isDead) return;
         TextureRegion frame = currentAnimation.getKeyFrame(stateTime, true);
-        batch.draw(frame, x - 32, y - 32, 64, 64);
-    }
+        float size = 64 * Constants.SLIME_SCALE;
+        batch.draw(frame, x - size / 2f, y - size / 2f, size, size);    }
 
     public Rectangle getBounds() {
         return new Rectangle(x - 22, y - 22, 44, 44);
@@ -98,4 +102,7 @@ public class Slime2 {
     public float getDamage() { return damage; }
     public float getAttackCooldown() { return attackCooldown; }
     public void setAttackCooldown(float time) { attackCooldown = time; }
+    public void setPosition(float x, float y) { this.x = x; this.y = y; }
+    public float getHp() { return hp; }
+    public float getMaxHp() { return maxHp; }
 }

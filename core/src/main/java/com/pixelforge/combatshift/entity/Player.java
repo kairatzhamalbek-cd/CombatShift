@@ -29,8 +29,8 @@ public class Player {
     private float attackTimer = 0f;
 
     // === HP и Stamina ===
-    private float hp = 100f;
-    private final float maxHp = 100f;
+    private float hp = 400f;
+    private final float maxHp = 400f;
     private float stamina = 100f;
     private final float maxStamina = 100f;
 
@@ -89,8 +89,30 @@ public class Player {
         return new Animation<>(frameDuration, frames, Animation.PlayMode.LOOP);
     }
 
-    public void update(float delta, float dx, float dy, boolean isRunning, boolean isAttackingNow) {
+    public void update(float delta, float dx, float dy, boolean isRunningInput, boolean isAttackingNow) {
         stateTime += delta;
+
+        // === СТАМИНА ЛОГИКА ===
+        boolean canRun = stamina > 0f;
+        boolean isActuallyRunning = isRunningInput && canRun && (dx != 0 || dy != 0);
+
+        if (isActuallyRunning) {
+            // Тратим стамину
+            stamina -= Constants.STAMINA_DRAIN_RATE * delta;
+            if (stamina < 0) stamina = 0;
+        } else {
+            // Восстанавливаем стамину
+            stamina += Constants.STAMINA_REGEN_RATE * delta;
+            if (stamina > maxStamina) stamina = maxStamina;
+        }
+
+        // Особое правило: если стамина дошла до 0 — нельзя бежать пока не восстановится полностью
+        if (stamina <= 0f && isRunningInput) {
+            isActuallyRunning = false;
+        }
+
+        // Используем isActuallyRunning для анимации и скорости
+        boolean isRunning = isActuallyRunning;
 
         if (isAttackingNow && !isAttacking) {
             isAttacking = true;
